@@ -11,15 +11,15 @@ func NewLocalMgr() *localMgr {
 	return new(localMgr)
 }
 
-func (r *localMgr) Analyze(images []string) ([]registry.ImageMetadata, error) {
+func (r *localMgr) Analyze(images []string) ([]*registry.ImageMetadata, error) {
 	var image registry.ImageMetadata
-	list := make([]registry.ImageMetadata, 1)
-	list[0] = image
+	list := make([]*registry.ImageMetadata, 1)
+	list[0] = &image
 	return list, nil
 }
 
-func (r *localMgr) Version() (Version, error) {
-	var v Version
+func (r *localMgr) Status() (Status, error) {
+	var v Status
 	v.Version = "0.1.0"
 	v.Name = "Local Image Manager"
 	return v, nil

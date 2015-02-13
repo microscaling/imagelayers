@@ -7,8 +7,8 @@ import (
 
 	"github.com/CenturyLinkLabs/imagelayers/api"
 	"github.com/CenturyLinkLabs/imagelayers/graph"
-	"github.com/rs/cors"
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 type layerServer struct {
@@ -37,19 +37,17 @@ func (s *layerServer) Start(port int) {
 }
 
 func (s *layerServer) createRouter() serverRouter {
-	registry := api.NewApi(api.NewRegistryMgr())
-	local := api.NewApi(api.NewLocalMgr())
+	registry := api.NewRegistry()
 	router := serverRouter{mux.NewRouter()}
 
-	router.addCorsRoutes("/api", registry.Routes())
-	router.addRoutes("/local", local.Routes())
+	router.addCorsRoutes("/registry", registry.Routes())
 	router.addRoutes("/graph", graph.Routes())
 
 	return router
 }
 
 type serverRouter struct {
-     *mux.Router
+	*mux.Router
 }
 
 func (sr *serverRouter) addCorsRoutes(context string, routeMap map[string]map[string]http.HandlerFunc) {
@@ -58,7 +56,6 @@ func (sr *serverRouter) addCorsRoutes(context string, routeMap map[string]map[st
 		sr.Path(path).Methods("OPTIONS").Handler(cors.Default().Handler(wrap))
 	})
 }
-
 
 func (sr *serverRouter) addRoutes(context string, routeMap map[string]map[string]http.HandlerFunc) {
 	sr.generateRoutes(context, routeMap, func(path string, method string, wrap http.HandlerFunc) {
@@ -88,10 +85,7 @@ func (sr *serverRouter) generateRoutes(context string, routeMap map[string]map[s
 				log.Printf("Completed %d", ww.statusCode)
 			}
 
-			build(context + localRoute, localMethod, wrap)
+			build(context+localRoute, localMethod, wrap)
 		}
 	}
 }
-
-
-

@@ -10,7 +10,7 @@ type Test struct {
 }
 
 func Routes() map[string]map[string]http.HandlerFunc {
-	return map[string]map[string]http.HandlerFunc {
+	return map[string]map[string]http.HandlerFunc{
 		"GET": {
 			"/test": testGraph,
 		},
