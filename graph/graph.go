@@ -1,4 +1,4 @@
-package graph
+package graph // import "github.com/CenturyLinkLabs/imagelayers/graph"
 
 import (
 	"encoding/json"

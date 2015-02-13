@@ -1,4 +1,4 @@
-package server
+package server // import "github.com/CenturyLinkLabs/imagelayers/server"
 
 import (
 	"fmt"
@@ -10,6 +10,43 @@ import (
 	"github.com/rs/cors"
 	"github.com/gorilla/mux"
 )
+
+type layerServer struct {
+}
+
+func NewServer() *layerServer {
+	return new(layerServer)
+}
+
+type statusLoggingResponseWriter struct {
+	http.ResponseWriter
+	statusCode int
+}
+
+func (w *statusLoggingResponseWriter) WriteHeader(code int) {
+	w.statusCode = code
+	w.ResponseWriter.WriteHeader(code)
+}
+
+func (s *layerServer) Start(port int) {
+	router := s.createRouter()
+
+	log.Printf("Server running on port %d", port)
+	portString := fmt.Sprintf(":%d", port)
+	http.ListenAndServe(portString, router)
+}
+
+func (s *layerServer) createRouter() serverRouter {
+	registry := api.NewApi(api.NewRegistryMgr())
+	local := api.NewApi(api.NewLocalMgr())
+	router := serverRouter{mux.NewRouter()}
+
+	router.addCorsRoutes("/api", registry.Routes())
+	router.addRoutes("/local", local.Routes())
+	router.addRoutes("/graph", graph.Routes())
+
+	return router
+}
 
 type serverRouter struct {
      *mux.Router
@@ -56,39 +93,5 @@ func (sr *serverRouter) generateRoutes(context string, routeMap map[string]map[s
 	}
 }
 
-
-type layerServer struct {
-}
-
-func NewServer() *layerServer {
-	return new(layerServer)
-}
-
-type statusLoggingResponseWriter struct {
-	http.ResponseWriter
-	statusCode int
-}
-
-func (w *statusLoggingResponseWriter) WriteHeader(code int) {
-	w.statusCode = code
-	w.ResponseWriter.WriteHeader(code)
-}
-
-func (s *layerServer) Start(port int) {
-	router := s.createRouter()
-
-	log.Printf("Server running on port %d", port)
-	portString := fmt.Sprintf(":%d", port)
-	http.ListenAndServe(portString, router)
-}
-
-func (s *layerServer) createRouter() serverRouter {
-	router := serverRouter{mux.NewRouter()}
-
-	router.addCorsRoutes("/api", api.Routes())
-	router.addRoutes("/graph", graph.Routes())
-
-	return router
-}
 
 

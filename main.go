@@ -1,4 +1,4 @@
-package main
+package main // import "github.com/CenturyLinkLabs/imagelayers"
 
 import (
 	"flag"
