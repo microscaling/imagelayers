@@ -2,27 +2,32 @@ package api
 
 import (
 	"encoding/json"
-	"net/http"
 	"log"
+	"net/http"
+	"io/ioutil"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 )
 
-type Version struct {
+type Status struct {
 	Version string `json:"version"`
-	Name	string `json:"name"`
+	Name    string `json:"name"`
+}
+
+type Repositories struct {
+	Images []string `json:"images"`
 }
 
 type LayerManager interface {
-	Version() (Version, error)
-	Analyze([]string) ([]registry.ImageMetadata, error)
+	Status() (Status, error)
+	Analyze([]string) ([]*registry.ImageMetadata, error)
 }
 
 type api struct {
 	manager LayerManager
 }
 
-func NewApi(mgr LayerManager) *api {
+func newApi(mgr LayerManager) *api {
 	newApi := new(api)
 	newApi.manager = mgr
 
@@ -30,9 +35,9 @@ func NewApi(mgr LayerManager) *api {
 }
 
 func (a *api) Routes() map[string]map[string]http.HandlerFunc {
-	return map[string]map[string]http.HandlerFunc {
+	return map[string]map[string]http.HandlerFunc{
 		"GET": {
-			"/version":a.version,
+			"/status": a.status,
 		},
 		"POST": {
 			"/analyze": a.analyze,
@@ -40,17 +45,23 @@ func (a *api) Routes() map[string]map[string]http.HandlerFunc {
 	}
 }
 
-
 func (a *api) analyze(w http.ResponseWriter, r *http.Request) {
-	test := new(registry.ImageMetadata)
-	test.ID = "Me"
+	var repos Repositories
 
-	json.NewEncoder(w).Encode(test)
+	body, err := ioutil.ReadAll(r.Body)
+	err = json.Unmarshal(body, &repos)
+	if err != nil {
+		panic(err)
+	}
+
+	layers, _ := a.manager.Analyze(repos.Images)
+
+	json.NewEncoder(w).Encode(layers)
 }
 
-func (a *api) version(w http.ResponseWriter, r *http.Request) {
-	version, _ := a.manager.Version()
-	log.Printf("Version: %s", version.Name)
+func (a *api) status(w http.ResponseWriter, r *http.Request) {
+	status, _ := a.manager.Status()
+	log.Printf("Status: %s", status.Name)
 
-	json.NewEncoder(w).Encode(version)
+	json.NewEncoder(w).Encode(status)
 }
