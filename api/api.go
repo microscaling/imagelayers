@@ -28,10 +28,7 @@ type api struct {
 }
 
 func newApi(mgr LayerManager) *api {
-	newApi := new(api)
-	newApi.manager = mgr
-
-	return newApi
+	return &api{manager: mgr}
 }
 
 func (a *api) Routes() map[string]map[string]http.HandlerFunc {

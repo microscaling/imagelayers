@@ -2,9 +2,9 @@ package api
 
 import (
 	"encoding/json"
-//	"io/ioutil"
-//	"log"
-//	"net/http"
+	"net/http"
+	"net/http/httptest"
+	"strings"
 	"testing"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
@@ -47,6 +47,24 @@ func TestRoutes (t *testing.T) {
 	routes := api.Routes()
 
 	assert.NotNil(t, routes["GET"])
+	assert.NotNil(t, routes["GET"]["/status"])
 	assert.NotNil(t, routes["POST"])
+	assert.NotNil(t, routes["POST"]["/analyze"])
+}
+
+func TestAnalyze(t *testing.T) {
+	layerManager := new(mockLayerManager)
+	api := newApi(layerManager)
+	inBody, images := "{\"repos\":[\"foo\"]}", []string{"foo"}
+
+	resp := make([]*registry.ImageMetadata,1)
+	req, _ := http.NewRequest("POST", "http://localhost/analyze", strings.NewReader(inBody))
+	w := httptest.NewRecorder()
+
+	layerManager.On("Analyze", images).Return(resp, nil)
+
+	api.analyze(w, req)
+
+	layerManager.AssertExpectations(t)
 }
 
