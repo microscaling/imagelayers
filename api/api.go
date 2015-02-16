@@ -15,7 +15,7 @@ type Status struct {
 }
 
 type Repositories struct {
-	Images []string `json:"images"`
+	Repos []string `json:"repos"`
 }
 
 type LayerManager interface {
@@ -54,7 +54,7 @@ func (a *api) analyze(w http.ResponseWriter, r *http.Request) {
 		panic(err)
 	}
 
-	layers, _ := a.manager.Analyze(repos.Images)
+	layers, _ := a.manager.Analyze(repos.Repos)
 
 	json.NewEncoder(w).Encode(layers)
 }
