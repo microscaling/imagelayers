@@ -2,9 +2,6 @@ package api
 
 import (
 	"encoding/json"
-//	"io/ioutil"
-//	"log"
-//	"net/http"
 	"testing"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
@@ -48,11 +45,4 @@ func TestRoutes (t *testing.T) {
 
 	assert.NotNil(t, routes["GET"])
 	assert.NotNil(t, routes["POST"])
-
 }
-
-//func TestAnalyze (t *testing.T) {
-//	api := newApi(mockLayerManager)
-//
-//
-//}
