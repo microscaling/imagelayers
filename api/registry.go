@@ -17,23 +17,25 @@ func NewRegistry() *api {
 }
 
 func (mgr *registryMgr) Status() (Status, error) {
-	var v Status
+	var s Status
 
-	v.Version = "0.1.0"
-	v.Name = "Registry Image Manager"
-	return v, nil
+	s.Status = "Connected to Registry"
+	s.Name = "Registry Image Manager"
+	return s, nil
 }
 
 func (mgr *registryMgr) Analyze(images []string) ([]*registry.ImageMetadata, error) {
-	repo := "centurylink/image-graph"
+	list := make([]*registry.ImageMetadata,0)
 	client := registry.NewClient()
-	auth,_ := client.Hub.GetReadToken(repo)
 
-	id, _ := client.Repository.GetImageID(repo, "latest", auth)
-
-	layers, _ := client.Image.GetAncestry(id, auth)
 	// Goroutine for metadata
-	list := mgr.loadImageData(client, auth, layers)
+	for _, image := range images {
+		auth, _ := client.Hub.GetReadToken(image)
+		id, _ := client.Repository.GetImageID(image, "latest", auth)
+		layers, _ := client.Image.GetAncestry(id, auth)
+		metadata := mgr.loadImageData(client, auth, layers)
+		list = append(list, metadata...)
+	}
 
 	return list, nil
 }

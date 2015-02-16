@@ -2,16 +2,16 @@ package api
 
 import (
 	"encoding/json"
+	"io/ioutil"
 	"log"
 	"net/http"
-	"io/ioutil"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 )
 
 type Status struct {
-	Version string `json:"version"`
-	Name    string `json:"name"`
+	Status string `json:"status"`
+	Name   string `json:"name"`
 }
 
 type Repositories struct {
