@@ -26,14 +26,14 @@ func (m *mockLayerManager) Status() (Status, error) {
 	return args.Get(0).(Status), nil
 }
 
-func TestStatus (t *testing.T) {
+func TestMarshalStatus (t *testing.T) {
 	status := Status{Status: "active", Name: "foo"}
 	jsonTest, _ := json.Marshal(status)
 
 	assert.Equal(t, `{"status":"active","name":"foo"}`, string(jsonTest))
 }
 
-func TestRespositories (t *testing.T) {
+func TestMarshalRespositories (t *testing.T) {
 	imageList := []string{"foo", "bar", "baz"}
 	repos := Repositories{Repos: imageList}
 	jsonTest, _ := json.Marshal(repos)
@@ -68,3 +68,17 @@ func TestAnalyze(t *testing.T) {
 	layerManager.AssertExpectations(t)
 }
 
+func TestStatus(t *testing.T) {
+	layerManager := new(mockLayerManager)
+	api := newApi(layerManager)
+
+	resp := Status{Status:"foo", Name:"bar"}
+	req, _ := http.NewRequest("POST", "http://localhost/analyze", strings.NewReader("{}"))
+	w := httptest.NewRecorder()
+
+	layerManager.On("Status").Return(resp, nil)
+
+	api.status(w, req)
+
+	layerManager.AssertExpectations(t)
+}
