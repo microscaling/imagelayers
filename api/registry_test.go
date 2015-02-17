@@ -51,7 +51,7 @@ func TestMarshalStatus(t *testing.T) {
 func TestMarshalRequest(t *testing.T) {
 	repo1 := Repo{Name: "foo", Tag: "latest"}
 	repo2 := Repo{Name: "bar", Tag: "latest"}
-	imageList := []Repo{ repo1, repo2}
+	imageList := []Repo{repo1, repo2}
 	repos := Request{Repos: imageList}
 	jsonTest, _ := json.Marshal(repos)
 

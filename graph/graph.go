@@ -1,8 +1,8 @@
 package graph // import "github.com/CenturyLinkLabs/imagelayers/graph"
 
 import (
-	"encoding/json"
 	"net/http"
+	"text/template"
 )
 
 type Test struct {
@@ -12,14 +12,19 @@ type Test struct {
 func Routes() map[string]map[string]http.HandlerFunc {
 	return map[string]map[string]http.HandlerFunc{
 		"GET": {
-			"/": testGraph,
+			"/": indexHandler,
 		},
 	}
 }
 
-func testGraph(w http.ResponseWriter, r *http.Request) {
-	test := new(Test)
-	test.Name = "GRAPH"
+func indexHandler(w http.ResponseWriter, r *http.Request) {
+	t := template.New("index.html")
+	t, err := t.ParseFiles("graph/tmpl/index.html")
+	if err != nil {
+		panic(err)
+	}
 
-	json.NewEncoder(w).Encode(test)
+	w.Header().Set("Content-Type", "text/html")
+	t.Execute(w, "")
+
 }

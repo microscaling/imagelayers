@@ -55,6 +55,7 @@ func (reg *registryApi) handleStatus(w http.ResponseWriter, r *http.Request) {
 	status, _ := reg.connection.Status()
 	log.Printf("Status: %s", status.Service)
 
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(status)
 }
 
@@ -69,6 +70,7 @@ func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
 	}
 	layers, _ := reg.inspectImages(request.Repos)
 
+	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(layers)
 }
 

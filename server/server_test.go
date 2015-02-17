@@ -1,17 +1,18 @@
 package server
 
 import (
+
 	"strings"
 	"testing"
 	"net/http"
 	"net/http/httptest"
+	"testing"
 
 	"github.com/stretchr/testify/assert"
 )
 
 var (
 	srv *httptest.Server
-
 )
 
 func setupServer() {
@@ -22,7 +23,7 @@ func teardownServer() {
 	srv.Close()
 }
 
-func TestGraphRoute (t *testing.T) {
+func TestGraphRoute(t *testing.T) {
 	setupServer()
 	defer teardownServer()
 
@@ -32,6 +33,7 @@ func TestGraphRoute (t *testing.T) {
 	assert.Nil(t, err)
 	assert.Equal(t, 200, resp.StatusCode)
 }
+
 
 func TestStatusGetSuccess (t *testing.T) {
 	setupServer()
