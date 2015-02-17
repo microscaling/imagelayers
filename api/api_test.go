@@ -48,11 +48,5 @@ func TestRoutes (t *testing.T) {
 
 	assert.NotNil(t, routes["GET"])
 	assert.NotNil(t, routes["POST"])
-
 }
 
-//func TestAnalyze (t *testing.T) {
-//	api := newApi(mockLayerManager)
-//
-//
-//}
