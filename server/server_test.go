@@ -1,0 +1,48 @@
+package server
+
+import (
+	"testing"
+	"net/http"
+	"net/http/httptest"
+
+	"github.com/stretchr/testify/assert"
+)
+
+var (
+	srv *httptest.Server
+
+)
+
+func setupServer() {
+	srv = httptest.NewServer(NewServer().createRouter())
+}
+
+func teardownServer() {
+	srv.Close()
+}
+
+func TestGraphRoute (t *testing.T) {
+	setupServer()
+	defer teardownServer()
+
+	path := srv.URL + "/graph/"
+	resp, err := http.DefaultClient.Get(path)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, resp.StatusCode)
+}
+
+func TestRegistryRoute (t *testing.T) {
+	setupServer()
+	defer teardownServer()
+
+	path := srv.URL + "/registry/status"
+
+	req, _ := http.NewRequest("GET", path, nil)
+	req.Header.Add("Origin", srv.URL)
+	resp, err := http.DefaultClient.Do(req)
+
+	assert.Nil(t, err)
+	assert.Equal(t, 200, resp.StatusCode)
+	assert.Equal(t, srv.URL, resp.Header.Get("Access-Control-Allow-Origin"), "CORS Allow-Origin not set")
+}

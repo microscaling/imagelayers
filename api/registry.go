@@ -5,60 +5,100 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"sync"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 )
 
 type Status struct {
 	Message string `json:"message"`
-	Service   string `json:"service"`
+	Service string `json:"service"`
 }
 
 type Request struct {
-	Repos []string `json:"repos"`
+	Repos []Repo `json:"repos"`
 }
 
-type LayerManager interface {
+type Repo struct {
+	Name string `json:"name"`
+	Tag  string `json:"tag"`
+}
+
+type RegistryConnection interface {
 	Status() (Status, error)
-	Analyze([]string) ([]*registry.ImageMetadata, error)
+	Connect(string) error
+	GetImageID(string, string) (string, error)
+	GetAncestry(string) ([]string, error)
+	GetMetadata(string) (*registry.ImageMetadata, error)
 }
 
 type registryApi struct {
-	manager LayerManager
+	connection RegistryConnection
 }
 
-func newRegistryApi(mgr LayerManager) *registryApi {
-	return &registryApi{manager: mgr}
+func newRegistryApi(conn RegistryConnection) *registryApi {
+	return &registryApi{connection: conn}
 }
 
 func (reg *registryApi) Routes() map[string]map[string]http.HandlerFunc {
 	return map[string]map[string]http.HandlerFunc{
 		"GET": {
-			"/status": reg.status,
+			"/status": reg.handleStatus,
 		},
 		"POST": {
-			"/analyze": reg.analyze,
+			"/analyze": reg.handleAnalysis,
 		},
 	}
 }
 
-func (reg *registryApi) analyze(w http.ResponseWriter, r *http.Request) {
-	var repos Request
+func (reg *registryApi) handleStatus(w http.ResponseWriter, r *http.Request) {
+	status, _ := reg.connection.Status()
+	log.Printf("Status: %s", status.Service)
+
+	json.NewEncoder(w).Encode(status)
+}
+
+func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
+	var request Request
 
 	body, err := ioutil.ReadAll(r.Body)
 
-	err = json.Unmarshal(body, &repos)
+	err = json.Unmarshal(body, &request)
 	if err != nil {
 		panic(err)
 	}
-	layers, _ := reg.manager.Analyze(repos.Repos)
+	layers, _ := reg.inspectImages(request.Repos)
 
 	json.NewEncoder(w).Encode(layers)
 }
 
-func (reg *registryApi) status(w http.ResponseWriter, r *http.Request) {
-	status, _ := reg.manager.Status()
-	log.Printf("Status: %s", status.Service)
+func (reg *registryApi) inspectImages(images []Repo) ([]*registry.ImageMetadata, error) {
+	list := make([]*registry.ImageMetadata, 0)
 
-	json.NewEncoder(w).Encode(status)
+	// Goroutine for metadata
+	for _, image := range images {
+		reg.connection.Connect(image.Name)
+		id, _ := reg.connection.GetImageID(image.Name, image.Tag)
+		layers, _ := reg.connection.GetAncestry(id)
+		metadata := reg.loadMetaData(layers)
+		list = append(list, metadata...)
+	}
+
+	return list, nil
+}
+
+func (reg *registryApi) loadMetaData(layers []string) []*registry.ImageMetadata {
+	var wg sync.WaitGroup
+	list := make([]*registry.ImageMetadata, len(layers))
+
+	for i, layerID := range layers {
+		wg.Add(1)
+		go func(idx int, layer string) {
+			defer wg.Done()
+			m, _ := reg.connection.GetMetadata(layerID)
+			list[idx] = m
+		}(i, layerID)
+	}
+	wg.Wait()
+	return list
 }

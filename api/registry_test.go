@@ -8,42 +8,59 @@ import (
 	"testing"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
-	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/mock"
 )
 
-type mockLayerManager struct {
+type mockConnection struct {
 	mock.Mock
 }
 
-func (m *mockLayerManager) Analyze(images []string) ([]*registry.ImageMetadata, error) {
-	args := m.Mock.Called(images)
-	return args.Get(0).([]*registry.ImageMetadata), nil
-}
-
-func (m *mockLayerManager) Status() (Status, error) {
+func (m *mockConnection) Status() (Status, error) {
 	args := m.Mock.Called()
 	return args.Get(0).(Status), nil
 }
 
-func TestMarshalStatus (t *testing.T) {
+func (m *mockConnection) Connect(repo string) error {
+	args := m.Mock.Called(repo)
+	return args.Error(0)
+}
+
+func (m *mockConnection) GetImageID(image string, tag string) (string, error) {
+	args := m.Mock.Called(image, tag)
+	return args.Get(0).(string), nil
+}
+
+func (m *mockConnection) GetAncestry(id string) ([]string, error) {
+	args := m.Mock.Called(id)
+	return args.Get(0).([]string), nil
+}
+
+func (m *mockConnection) GetMetadata(layer string) (*registry.ImageMetadata, error) {
+	args := m.Mock.Called(layer)
+	return args.Get(0).(*registry.ImageMetadata), nil
+}
+
+func TestMarshalStatus(t *testing.T) {
 	status := Status{Message: "active", Service: "foo"}
 	jsonTest, _ := json.Marshal(status)
 
 	assert.Equal(t, `{"message":"active","service":"foo"}`, string(jsonTest))
 }
 
-func TestMarshalRequest (t *testing.T) {
-	imageList := []string{"foo", "bar", "baz"}
+func TestMarshalRequest(t *testing.T) {
+	repo1 := Repo{Name: "foo", Tag: "latest"}
+	repo2 := Repo{Name: "bar", Tag: "latest"}
+	imageList := []Repo{ repo1, repo2}
 	repos := Request{Repos: imageList}
 	jsonTest, _ := json.Marshal(repos)
 
-	assert.Equal(t, `{"repos":["foo","bar","baz"]}`, string(jsonTest))
+	assert.Equal(t, `{"repos":[{"name":"foo","tag":"latest"},{"name":"bar","tag":"latest"}]}`, string(jsonTest))
 }
 
-func TestRoutes (t *testing.T) {
-	layerManager := new(mockLayerManager)
-	api := newRegistryApi(layerManager)
+func TestRoutes(t *testing.T) {
+	fakeConn := new(mockConnection)
+	api := newRegistryApi(fakeConn)
 	routes := api.Routes()
 
 	assert.NotNil(t, routes["GET"])
@@ -54,37 +71,45 @@ func TestRoutes (t *testing.T) {
 
 func TestAnalyzeRequest(t *testing.T) {
 	// setup
-	layerManager := new(mockLayerManager)
-	api := newRegistryApi(layerManager)
-	inBody, images := "{\"repos\":[\"foo\"]}", []string{"foo"}
+	fakeConn := new(mockConnection)
+	api := newRegistryApi(fakeConn)
+	layers := []string{"baz"}
+	inBody, image := "{\"repos\":[{\"name\":\"foo\",\"tag\":\"latest\"}]}", "foo"
 
 	// build request
-	resp := make([]*registry.ImageMetadata,1)
 	req, _ := http.NewRequest("POST", "http://localhost/analyze", strings.NewReader(inBody))
 	w := httptest.NewRecorder()
 
+	// build response
+	metadata := new(registry.ImageMetadata)
+	resp := make([]*registry.ImageMetadata, 1)
+	resp[0] = metadata
+
 	// test
-	layerManager.On("Analyze", images).Return(resp, nil)
-	api.analyze(w, req)
+	fakeConn.On("Connect", image).Return(nil)
+	fakeConn.On("GetImageID", image, "latest").Return("fooID")
+	fakeConn.On("GetAncestry", "fooID").Return(layers)
+	fakeConn.On("GetMetadata", "baz").Return(metadata)
+	api.handleAnalysis(w, req)
 
 	// asserts
-	layerManager.AssertExpectations(t)
+	fakeConn.AssertExpectations(t)
 }
 
 func TestStatusRequest(t *testing.T) {
 	// setup
-	layerManager := new(mockLayerManager)
-	api := newRegistryApi(layerManager)
+	fakeConn := new(mockConnection)
+	api := newRegistryApi(fakeConn)
 
 	// build request
-	resp := Status{Message:"foo", Service:"bar"}
+	resp := Status{Message: "foo", Service: "bar"}
 	req, _ := http.NewRequest("GET", "http://localhost/analyze", strings.NewReader("{}"))
 	w := httptest.NewRecorder()
 
 	// test
-	layerManager.On("Status").Return(resp, nil)
-	api.status(w, req)
+	fakeConn.On("Status").Return(resp, nil)
+	api.handleStatus(w, req)
 
 	// asserts
-	layerManager.AssertExpectations(t)
+	fakeConn.AssertExpectations(t)
 }
