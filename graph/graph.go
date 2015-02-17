@@ -3,8 +3,8 @@ package graph // import "github.com/CenturyLinkLabs/imagelayers/graph"
 import (
 	"net/http"
 	"text/template"
-
 	"github.com/CenturyLinkLabs/imagelayers/server"
+
 )
 
 type Test struct {
@@ -31,7 +31,6 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-
 	w.Header().Set("Content-Type", "text/html")
 	t.Execute(w, "")
 }
