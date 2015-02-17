@@ -18,6 +18,14 @@ func NewServer() *layerServer {
 	return new(layerServer)
 }
 
+func (s *layerServer) Start(port int) {
+	router := s.createRouter()
+
+	log.Printf("Server running on port %d", port)
+	portString := fmt.Sprintf(":%d", port)
+	http.ListenAndServe(portString, router)
+}
+
 type statusLoggingResponseWriter struct {
 	http.ResponseWriter
 	statusCode int
@@ -28,16 +36,8 @@ func (w *statusLoggingResponseWriter) WriteHeader(code int) {
 	w.ResponseWriter.WriteHeader(code)
 }
 
-func (s *layerServer) Start(port int) {
-	router := s.createRouter()
-
-	log.Printf("Server running on port %d", port)
-	portString := fmt.Sprintf(":%d", port)
-	http.ListenAndServe(portString, router)
-}
-
 func (s *layerServer) createRouter() serverRouter {
-	registry := api.NewRegistry()
+	registry := api.NewRemoteRegistry()
 	router := serverRouter{mux.NewRouter()}
 
 	router.addCorsRoutes("/registry", registry.Routes())

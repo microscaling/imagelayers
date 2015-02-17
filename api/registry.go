@@ -1,57 +1,64 @@
 package api
 
 import (
-	"sync"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"net/http"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 )
 
-type registryMgr struct {
+type Status struct {
+	Message string `json:"message"`
+	Service   string `json:"service"`
 }
 
-func NewRegistry() *api {
-	mgr := new(registryMgr)
-	reg := newApi(mgr)
-
-	return reg
+type Request struct {
+	Repos []string `json:"repos"`
 }
 
-func (mgr *registryMgr) Status() (Status, error) {
-	var s Status
-
-	s.Status = "Connected to Registry"
-	s.Name = "Registry Image Manager"
-	return s, nil
+type LayerManager interface {
+	Status() (Status, error)
+	Analyze([]string) ([]*registry.ImageMetadata, error)
 }
 
-func (mgr *registryMgr) Analyze(images []string) ([]*registry.ImageMetadata, error) {
-	list := make([]*registry.ImageMetadata,0)
-	client := registry.NewClient()
+type registryApi struct {
+	manager LayerManager
+}
 
-	// Goroutine for metadata
-	for _, image := range images {
-		auth, _ := client.Hub.GetReadToken(image)
-		id, _ := client.Repository.GetImageID(image, "latest", auth)
-		layers, _ := client.Image.GetAncestry(id, auth)
-		metadata := mgr.loadImageData(client, auth, layers)
-		list = append(list, metadata...)
+func newRegistryApi(mgr LayerManager) *registryApi {
+	return &registryApi{manager: mgr}
+}
+
+func (reg *registryApi) Routes() map[string]map[string]http.HandlerFunc {
+	return map[string]map[string]http.HandlerFunc{
+		"GET": {
+			"/status": reg.status,
+		},
+		"POST": {
+			"/analyze": reg.analyze,
+		},
 	}
-
-	return list, nil
 }
 
-func (mgr *registryMgr) loadImageData(client *registry.Client, auth *registry.TokenAuth, layers []string) []*registry.ImageMetadata {
-	var wg sync.WaitGroup
-	list := make([]*registry.ImageMetadata, len(layers))
+func (reg *registryApi) analyze(w http.ResponseWriter, r *http.Request) {
+	var repos Request
 
-	for i, layerID := range layers {
-		wg.Add(1)
-		go func(idx int, layer string) {
-			defer wg.Done()
-			m, _ := client.Image.GetMetadata(layerID, auth)
-			list[idx] = m
-		}(i, layerID)
+	body, err := ioutil.ReadAll(r.Body)
+
+	err = json.Unmarshal(body, &repos)
+	if err != nil {
+		panic(err)
 	}
-	wg.Wait()
-	return list
+	layers, _ := reg.manager.Analyze(repos.Repos)
+
+	json.NewEncoder(w).Encode(layers)
+}
+
+func (reg *registryApi) status(w http.ResponseWriter, r *http.Request) {
+	status, _ := reg.manager.Status()
+	log.Printf("Status: %s", status.Service)
+
+	json.NewEncoder(w).Encode(status)
 }
