@@ -7,8 +7,8 @@ import (
 	"net/http"
 	"sync"
 
-	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 	"github.com/CenturyLinkLabs/imagelayers/server"
+	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 )
 
 type Status struct {

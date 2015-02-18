@@ -4,7 +4,6 @@ import (
 	"net/http"
 	"text/template"
 	"github.com/CenturyLinkLabs/imagelayers/server"
-
 )
 
 type Test struct {
