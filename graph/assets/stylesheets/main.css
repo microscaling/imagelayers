@@ -1,0 +1,192 @@
+* {
+  box-sizing: border-box;
+}
+
+table, thead, tbody, tfoot, tr, td {
+  box-sizing: content-box;
+}
+
+body, html {
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+ul, li {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+body {
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
+  min-width: 800px;
+}
+
+/* Header and Nav*/
+header {
+  width: 100%;
+  overflow: hidden;
+  margin-bottom: 10px;
+  background: #8EC643;
+}
+
+header h1.logo {
+  width: 190px;
+  background: #777;
+  border: none;
+  padding: 0;
+  margin: 0;
+  float: left;
+}
+
+header h1.logo:hover {
+  background-color: #333;
+  transition: background-color 0.25s ease;
+}
+
+header h1.logo + button {
+  position: absolute;
+  right: 10px;
+  top: 10px;
+}
+
+header h1.logo a {
+  overflow: hidden;
+  white-space: nowrap;
+  text-indent: -9999px;
+  color: transparent;
+  background: url('../images/pmx_logo.svg') no-repeat center center;
+  background-size: 148px 19px;
+  width: 100%;
+
+  display: block;
+  height: 54px;
+  margin: 0 auto;
+}
+
+header nav {
+  background: #8EC643;
+  width: 100%;
+  display: block;
+  padding-left: 190px;
+  margin-bottom: 0;
+}
+
+header nav ul li {
+  text-transform: uppercase;
+  font-weight: 400;
+  float: left;
+}
+
+header nav ul li a {
+  color: #FFF;
+  text-decoration: none;
+  padding: 20px 15px;
+  font-size: 12px;
+  letter-spacing: 2px;
+  display: block;
+  width: 100%;
+  text-align: center;
+}
+
+header nav ul li a:hover {
+  color: #FFF;
+  background-color: rgb(132, 188, 57);
+  transition: background-color 0.25s ease;
+}
+
+#social-icons {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 58px;
+  padding: 20px 10px 20px 0px;
+}
+
+#social-icons a {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+}
+
+#social-icons a.github {
+  background-image: url("../images/logo_github_white.svg");
+  margin-right: 2px;
+}
+
+#social-icons a.twitter {
+  background-image: url("../images/logo_twitter_white.svg");
+}
+
+/* Graph */
+
+main {
+  padding: 10px 15px;
+  margin-bottom: 10px;
+}
+
+main h2 {
+  margin-top: 0;
+  margin-bottom: .5em;
+  font-size: 30px;
+}
+main small {
+  display: block;
+}
+
+.layer {
+  text-align: center;
+  vertical-align: middle;
+  font-family: Consolas, Monaco, "Courier New", Courier, monospace;
+  background-color: #cccccc;
+  font-size: .75em;
+}
+
+.google-visualization-orgchart-lineleft {
+  border-left-color: #8EC643;
+}
+
+.google-visualization-orgchart-lineright {
+  border-right-color: #8EC643;
+}
+
+.google-visualization-orgchart-linetop {
+  border-top-color: #8EC643;
+}
+
+.google-visualization-orgchart-linebottom {
+  border-bottom-color: #8EC643;
+}
+
+.google-visualization-orgchart-nodesel {
+  border: none;
+  background: #8EC643;
+}
+
+.tags {
+  display: block;
+  font-weight: bold;
+  margin-top: 3px;
+}
+
+/* Footer */
+
+footer {
+  padding: 0 20px;
+}
+
+footer small {
+  font-size: 12px;
+  position: relative;
+  top: -30px;
+}
+
+footer .logo {
+  height: 70px;
+  width: 170px;
+  display: inline-block;
+  background: url("../images/ctl_logo_base.svg") 0 20px no-repeat white;
+  background-size: 140px 30px;
+}
