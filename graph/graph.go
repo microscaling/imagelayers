@@ -2,6 +2,7 @@ package graph // import "github.com/CenturyLinkLabs/imagelayers/graph"
 
 import (
 	"net/http"
+	"log"
 	"text/template"
 )
 
@@ -12,7 +13,10 @@ type Test struct {
 func Routes() map[string]map[string]http.HandlerFunc {
 	return map[string]map[string]http.HandlerFunc{
 		"GET": {
-			"/": indexHandler,
+			"/test":   indexHandler,
+		},
+		"STATIC": {
+			"/assets": assetHandler,
 		},
 	}
 }
@@ -26,5 +30,8 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 	t.Execute(w, "")
+}
 
+func assetHandler(w http.ResponseWriter, r *http.Request) {
+	log.Printf("static url: %s", r.URL)
 }

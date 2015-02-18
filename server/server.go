@@ -71,21 +71,27 @@ func (sr *serverRouter) generateRoutes(context string, routeMap map[string]map[s
 			localMethod := method
 			localRoute := route
 			localFct := fct
-			wrap := func(w http.ResponseWriter, r *http.Request) {
-				ww := &statusLoggingResponseWriter{w, 200}
+			if localMethod == "STATIC" {
+				sr.generateStaticRoute(context, localRoute, localFct)
+			} else {
+				wrap := func(w http.ResponseWriter, r *http.Request) {
+					ww := &statusLoggingResponseWriter{w, 200}
 
-				log.Printf("Started %s %s", r.Method, r.RequestURI)
+					log.Printf("Started %s %s", r.Method, r.RequestURI)
 
-				if localMethod != "DELETE" {
-					w.Header().Set("Content-Type", "application/json")
+					localFct(ww, r)
+
+					log.Printf("Completed %d", ww.statusCode)
 				}
 
-				localFct(ww, r)
-
-				log.Printf("Completed %d", ww.statusCode)
+				build(context+localRoute, localMethod, wrap)
 			}
-
-			build(context+localRoute, localMethod, wrap)
 		}
 	}
+}
+
+func (sr *serverRouter) generateStaticRoute(context string, route string, staticHandler http.HandlerFunc) {
+	path := context + route
+	log.Printf("static: %s", path)
+	sr.PathPrefix(path).Handler(http.StripPrefix(path, http.FileServer(http.Dir("."+path))))
 }
