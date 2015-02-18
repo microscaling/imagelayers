@@ -58,17 +58,6 @@ func TestMarshalRequest(t *testing.T) {
 	assert.Equal(t, `{"repos":[{"name":"foo","tag":"latest"},{"name":"bar","tag":"latest"}]}`, string(jsonTest))
 }
 
-func TestRoutes(t *testing.T) {
-	fakeConn := new(mockConnection)
-	api := newRegistryApi(fakeConn)
-	routes := api.Routes()
-
-	assert.NotNil(t, routes["GET"])
-	assert.NotNil(t, routes["GET"]["/status"])
-	assert.NotNil(t, routes["POST"])
-	assert.NotNil(t, routes["POST"]["/analyze"])
-}
-
 func TestAnalyzeRequest(t *testing.T) {
 	// setup
 	fakeConn := new(mockConnection)

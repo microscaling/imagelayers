@@ -2,23 +2,27 @@ package graph // import "github.com/CenturyLinkLabs/imagelayers/graph"
 
 import (
 	"net/http"
-	"log"
 	"text/template"
+
+	"github.com/CenturyLinkLabs/imagelayers/server"
 )
 
 type Test struct {
 	Name string `json:"name"`
 }
 
-func Routes() map[string]map[string]http.HandlerFunc {
-	return map[string]map[string]http.HandlerFunc{
+func Routes(context string, router *server.Router) {
+	routes :=  map[string]map[string]http.HandlerFunc{
 		"GET": {
-			"/test":   indexHandler,
-		},
-		"STATIC": {
-			"/assets": assetHandler,
+			"":   indexHandler,
 		},
 	}
+
+	router.AddRoutes(context, routes)
+
+	// Add Static Route
+	path := context + "/assets"
+	router.PathPrefix(path).Handler(http.StripPrefix(path, http.FileServer(http.Dir("."+path))))
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
@@ -30,8 +34,4 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "text/html")
 	t.Execute(w, "")
-}
-
-func assetHandler(w http.ResponseWriter, r *http.Request) {
-	log.Printf("static url: %s", r.URL)
 }

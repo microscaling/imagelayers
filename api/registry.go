@@ -7,6 +7,7 @@ import (
 	"net/http"
 	"sync"
 
+	"github.com/CenturyLinkLabs/imagelayers/server"
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 )
 
@@ -40,8 +41,8 @@ func newRegistryApi(conn RegistryConnection) *registryApi {
 	return &registryApi{connection: conn}
 }
 
-func (reg *registryApi) Routes() map[string]map[string]http.HandlerFunc {
-	return map[string]map[string]http.HandlerFunc{
+func (reg *registryApi) Routes(context string, router *server.Router) {
+	routes := map[string]map[string]http.HandlerFunc{
 		"GET": {
 			"/status": reg.handleStatus,
 		},
@@ -49,6 +50,8 @@ func (reg *registryApi) Routes() map[string]map[string]http.HandlerFunc {
 			"/analyze": reg.handleAnalysis,
 		},
 	}
+
+	router.AddCorsRoutes(context, routes)
 }
 
 func (reg *registryApi) handleStatus(w http.ResponseWriter, r *http.Request) {
