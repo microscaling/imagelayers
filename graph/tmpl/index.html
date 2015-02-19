@@ -2,11 +2,13 @@
 <html>
   <head>
     <meta charset="UTF-8">
-    <link rel="stylesheet" href="/graph/assets/stylesheets/main.css" type="text/css">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width">
+    <link rel="stylesheet" href="/assets/stylesheets/main.css" type="text/css">
     <title>Image Layers</title>
   </head>
 
-  <body>
+  <body ng-app="iLayers">
     <header>
       <h1 class='logo'>
         <a href="" title="Home">ImageLayers</a>
@@ -23,12 +25,19 @@
         <a href="http://twitter.com/panamax_io" target="_blank" title="Follow Us on Twitter" class="twitter"></a>
       </div>
     </header>
-    <main>
-      <h2>ImageLayers</h2>
+    <main ng-view>
+
     </main>
     <footer>
       <div class="logo"></div>
       <small>&copy; 2015 CenturyLink - The ImageLayers project is provided under the Apache 2.0 license. All Rights Reserved.</small>
     </footer>
+      <script src="/assets/scripts/vendor/jquery-1.11.2.min.js"></script>
+      <script src="/assets/scripts/vendor/angular.min.js"></script>
+      <script src="/assets/scripts/vendor/angular-route.min.js"></script>
+      <script src="/assets/scripts/app.js"></script>
+      <script src="/assets/scripts/controllers.js"></script>
+      <script src="/assets/scripts/filters.js"></script>
+      <script src="/assets/scripts/services.js"></script>
   </body>
 </html>
