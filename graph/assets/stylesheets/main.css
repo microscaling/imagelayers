@@ -34,7 +34,7 @@ header {
 
 header h1.logo {
   width: 190px;
-  background: #777;
+  background: #333;
   border: none;
   padding: 0;
   margin: 0;
@@ -42,7 +42,7 @@ header h1.logo {
 }
 
 header h1.logo:hover {
-  background-color: #333;
+  background-color: #000;
   transition: background-color 0.25s ease;
 }
 
@@ -57,8 +57,8 @@ header h1.logo a {
   white-space: nowrap;
   text-indent: -9999px;
   color: transparent;
-  background: url('../images/pmx_logo.svg') no-repeat center center;
-  background-size: 148px 19px;
+  background: url('../images/logo.png') no-repeat center center;
+  background-size: 100%;
   width: 100%;
 
   display: block;
@@ -67,7 +67,7 @@ header h1.logo a {
 }
 
 header nav {
-  background: #8EC643;
+  background: #555;
   width: 100%;
   display: block;
   padding-left: 190px;
