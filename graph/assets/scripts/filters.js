@@ -1,16 +1,16 @@
 'use strict';
 
 angular.module ('iLayers')
-  .filter ('size', function () {
+  .filter ('size', ['$sce', function ($sce) {
     var bytesToSize = function (bytes) {
        var sizes = ['bytes', 'kb', 'mb', 'gb', 'tb'];
-       if (bytes == 1) return '1 byte';
-       if (bytes == 0) return '0 bytes';
+       if (bytes == 1) return '1 <span>byte</span>';
+       if (bytes == 0) return '0';
        var i = parseInt(Math.floor(Math.log(bytes) / Math.log(1024)));
-       return Math.round(bytes / Math.pow(1024, i), 2) + ' ' + sizes[i];
+       return Math.round(bytes / Math.pow(1024, i), 2) + ' <span>' + sizes[i] + '</span>';
     };
 
     return function (input) {
-      return bytesToSize(input);
+      return $sce.trustAsHtml(bytesToSize(input));
     };
-  });
+  }]);

@@ -135,8 +135,34 @@ section.metrics li {
   border-right: 1px solid #4b4b4b;
 }
 
-section.metrics li:first {
+section.metrics li:last-child {
   border-right: none;
+}
+
+section.metrics dl {
+  margin: 0;
+  padding: 0 20px;
+}
+
+section.metrics dt {
+  color: #5f5f5f;
+  font-size: 12px;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+
+section.metrics dd {
+  margin: 0;
+  padding: 0;
+  color: #fff;
+  line-height: 20px;
+  font-size: 20px;
+  font-weight: bold;
+  letter-spacing: 0.1em;
+}
+
+section.metrics dd span {
+  color: #6c6c6c;
 }
 
 /* Search */

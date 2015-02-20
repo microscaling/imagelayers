@@ -7,17 +7,17 @@
         </li>
         <li>
             <dl><dt>Total Physical Size:</dt>
-                <dd>{{ metrics.size | size }}</dd>
+                <dd ng-bind-html='metrics.size | size'></dd>
             </dl>
         </li>
         <li>
             <dl><dt>Average Size:</dt>
-                <dd>{{ metrics.ave | size }}</dd>
+                <dd ng-bind-html='metrics.ave | size'></dd>
             </dl>
         </li>
         <li>
             <dl><dt>Largest Size:</dt>
-                <dd>{{ metrics.largest | size }}</dd>
+                <dd ng-bind-html='metrics.largest | size'></dd>
             </dl>
         </li>
     </ul>
@@ -27,7 +27,7 @@
 <main>
       <div ng-repeat="layer in layers" class="repeat-animation">
          <section>
-             {{ layer.id }} - {{ layer.Size  | size }}
+             {{ layer.id }} - {{ layer.Size }}
           </section>
       </div>
 </main>
