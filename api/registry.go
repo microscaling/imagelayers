@@ -100,7 +100,7 @@ func (reg *registryApi) loadMetaData(layers []string) []*registry.ImageMetadata 
 		wg.Add(1)
 		go func(idx int, layer string) {
 			defer wg.Done()
-			m, _ := reg.connection.GetMetadata(layerID)
+			m, _ := reg.connection.GetMetadata(layer)
 			list[idx] = m
 		}(i, layerID)
 	}

@@ -1,0 +1,31 @@
+.repeat-animation.ng-enter-stagger,
+.repeat-animation.ng-leave-stagger,
+.repeat-animation.ng-move-stagger {
+  /* 200ms will be applied between each sucessive enter operation */
+  -webkit-transition-delay:0.125s;
+  transition-delay:0.125s;
+}
+
+.repeat-animation.ng-enter,
+.repeat-animation.ng-leave,
+.repeat-animation.ng-move {
+  -webkit-transition:0.5s linear all;
+  transition:0.5s linear all;
+}
+
+.repeat-animation.ng-leave.ng-leave-active,
+.repeat-animation.ng-enter,
+.repeat-animation.ng-move {
+  -webkit-transition:0.4s linear all;
+  transition:0.4s linear all;
+
+  opacity:0;
+  line-height:0;
+}
+
+.repeat-animation.ng-leave,
+.repeat-animation.ng-move.ng-move-active,
+.repeat-animation.ng-enter.ng-enter-active {
+  opacity:1;
+  line-height:20px;
+}
