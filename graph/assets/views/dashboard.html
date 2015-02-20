@@ -1,8 +1,33 @@
+<section class="metrics">
+    <ul>
+        <li>
+            <dl><dt>Total Number of Layers:</dt>
+                <dd>{{ metrics.count }}</dd>
+            </dl>
+        </li>
+        <li>
+            <dl><dt>Total Physical Size:</dt>
+                <dd>{{ metrics.size | size }}</dd>
+            </dl>
+        </li>
+        <li>
+            <dl><dt>Average Size:</dt>
+                <dd>{{ metrics.ave | size }}</dd>
+            </dl>
+        </li>
+        <li>
+            <dl><dt>Largest Size:</dt>
+                <dd>{{ metrics.largest | size }}</dd>
+            </dl>
+        </li>
+    </ul>
+</section>
+<section class="search">
+</section>
 <main>
-      <h2>ImageLayers</h2>
-      <div ng-repeat="layer in data.layers">
+      <div ng-repeat="layer in layers" class="repeat-animation">
          <section>
-             {{layer.id}}
+             {{ layer.id }} - {{ layer.Size  | size }}
           </section>
       </div>
 </main>

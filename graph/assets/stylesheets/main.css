@@ -22,14 +22,15 @@ ul, li {
 body {
   font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
   min-width: 800px;
+  background: #d8d8d8;
 }
 
 /* Header and Nav*/
 header {
   width: 100%;
   overflow: hidden;
-  margin-bottom: 10px;
   background: #8EC643;
+  height: 59px;
 }
 
 header h1.logo {
@@ -120,9 +121,36 @@ header nav ul li a:hover {
   background-image: url("../images/logo_twitter_white.svg");
 }
 
+/* Metrics */
+section.metrics {
+  width: 100%;
+  background: #2d2d2d;
+  padding: 10px 20px;
+}
+
+section.metrics li {
+  display: inline-block;
+  width: 239px;
+  height: 51px;
+  border-right: 1px solid #4b4b4b;
+}
+
+section.metrics li:first {
+  border-right: none;
+}
+
+/* Search */
+section.search {
+  width: 100%;
+  height: 60px;
+  background: #fff;
+  border-bottom: 2px solid #8e8e8e;
+}
+
 /* Graph */
 
 main {
+  border-top: 3px solid #cacaca;
   padding: 10px 15px;
   margin-bottom: 10px;
 }
@@ -174,7 +202,7 @@ main small {
 /* Footer */
 
 footer {
-  padding: 0 20px;
+  padding: 20px;
 }
 
 footer small {
