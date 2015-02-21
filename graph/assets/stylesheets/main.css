@@ -30,45 +30,47 @@ header {
   width: 100%;
   overflow: hidden;
   background: #8EC643;
-  height: 59px;
+  height: 60px;
+  position: absolute;
+  top: 0;
 }
 
-header h1.logo {
+header .logo {
   width: 190px;
-  background: #777;
   border: none;
   padding: 0;
   margin: 0;
-  float: left;
 }
 
-header h1.logo:hover {
-  background-color: #333;
-  transition: background-color 0.25s ease;
-}
-
-header h1.logo + button {
-  position: absolute;
-  right: 10px;
-  top: 10px;
-}
-
-header h1.logo a {
+header .logo a {
   overflow: hidden;
   white-space: nowrap;
   text-indent: -9999px;
   color: transparent;
-  background: url('../images/pmx_logo.svg') no-repeat center center;
-  background-size: 148px 19px;
-  width: 100%;
-
   display: block;
   height: 54px;
   margin: 0 auto;
 }
 
+header h1.logo {
+  float: left;
+}
+
+header h1.logo a {
+  background: url('../images/logo.png') no-repeat center center;
+  background-size: 100%;
+}
+
+header cite.logo {
+  float: right;
+}
+
+header cite.logo a {
+  background: url('../images/ctl-logo-white.png') no-repeat center center;
+  background-size: 100%;
+}
+
 header nav {
-  background: #8EC643;
   width: 100%;
   display: block;
   padding-left: 190px;
@@ -156,9 +158,9 @@ section.metrics dd {
   padding: 0;
   color: #fff;
   line-height: 20px;
-  font-size: 20px;
+  font-size: 26px;
   font-weight: bold;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.075em;
 }
 
 section.metrics dd span {
@@ -170,15 +172,32 @@ section.search {
   width: 100%;
   height: 60px;
   background: #fff;
-  border-bottom: 2px solid #8e8e8e;
+  box-shadow: 0 0 5px rgba(0,0,0,.4);
+}
+
+section.search h3 {
+  display: inline-block;
+  margin-top: 18px;
+  margin-left: 40px;
+}
+
+section input[type="text"] {
+  width: 30%;
+  float: right;
+  margin-top: 10px;
+  margin-right: 40px;
+  padding: 10px;
+  font-size: 14px;
+  font-style: italic;
 }
 
 /* Graph */
 
 main {
-  border-top: 3px solid #cacaca;
-  padding: 10px 15px;
-  margin-bottom: 10px;
+  margin: 60px 0 0;
+  padding-bottom: 60px;
+  height: auto;
+  min-height: 90%;
 }
 
 main h2 {
@@ -190,6 +209,57 @@ main small {
   display: block;
 }
 
+section.graph ul{
+  padding: 10px;
+  margin: 0 auto;
+  width: 30%;
+}
+
+section.graph ul li {
+  background: #2d2d2d;
+  width: 100%;
+  display: block;
+  margin: 10px 0;
+  color: #fff;
+  padding: 10px 0;
+  position: relative;
+}
+
+section.graph ul li:after {
+  height: 16px;
+  width: 50%;
+  border-right: 2px solid #2d2d2d;
+  position: absolute;
+  bottom: -16px;
+  left: 0;
+  content: '';
+}
+
+section.graph ul li:last-child {
+  background-color: #fff;
+  color: #000;
+}
+
+section.graph ul li:last-child:after {
+  display: none;
+}
+
+section.graph ul li > span {
+  display: block;
+  max-width: 120px;
+  margin: 0 auto;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+  text-align: center;
+}
+
+section.graph ul li span.size {
+  font-weight: bold;
+  font-size: 1.3em;
+  margin-top: 6px;
+}
+
 .layer {
   text-align: center;
   vertical-align: middle;
@@ -197,7 +267,7 @@ main small {
   background-color: #cccccc;
   font-size: .75em;
 }
-
+p
 .google-visualization-orgchart-lineleft {
   border-left-color: #8EC643;
 }
@@ -228,7 +298,9 @@ main small {
 /* Footer */
 
 footer {
-  padding: 20px;
+  margin-top: -60px;
+  padding: 0 20px;
+  background: white;
 }
 
 footer small {
