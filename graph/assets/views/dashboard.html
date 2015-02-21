@@ -1,33 +1,43 @@
 <section class="metrics">
-    <ul>
-        <li>
-            <dl><dt>Total Number of Layers:</dt>
-                <dd>{{ metrics.count }}</dd>
-            </dl>
-        </li>
-        <li>
-            <dl><dt>Total Physical Size:</dt>
-                <dd ng-bind-html='metrics.size | size'></dd>
-            </dl>
-        </li>
-        <li>
-            <dl><dt>Average Size:</dt>
-                <dd ng-bind-html='metrics.ave | size'></dd>
-            </dl>
-        </li>
-        <li>
-            <dl><dt>Largest Size:</dt>
-                <dd ng-bind-html='metrics.largest | size'></dd>
-            </dl>
-        </li>
-    </ul>
+  <ul>
+    <li>
+      <dl>
+        <dt>Total Number of Layers:</dt>
+        <dd>{{ metrics.count }}</dd>
+      </dl>
+    </li>
+    <li>
+      <dl>
+        <dt>Total Physical Size:</dt>
+        <dd ng-bind-html='metrics.size | size'></dd>
+      </dl>
+    </li>
+    <li>
+      <dl>
+        <dt>Average Size:</dt>
+        <dd ng-bind-html='metrics.ave | size'></dd>
+      </dl>
+    </li>
+    <li>
+      <dl>
+        <dt>Largest Size:</dt>
+        <dd ng-bind-html='metrics.largest | size'></dd>
+      </dl>
+    </li>
+  </ul>
 </section>
 <section class="search">
+  <h3>Docker Images</h3>
+  <input type="text" placeholder="Find a layer or tag">
 </section>
-<main>
-      <div ng-repeat="layer in layers" class="repeat-animation">
-         <section>
-             {{ layer.id }} - {{ layer.Size }}
-          </section>
-      </div>
-</main>
+<section class="graph">
+  <ul class="image">
+    <li ng-repeat="layer in layers" class="repeat-animation">
+        <span class="id">
+          {{ layer.id }}
+        </span>
+        <span ng-bind-html='layer.Size | size' class="size">
+        </span>
+    </li>
+  </ul>
+</section>

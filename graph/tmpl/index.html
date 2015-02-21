@@ -10,14 +10,31 @@
   </head>
 
   <body ng-app="iLayers">
-    <header>
-
-    </header>
-    <div ng-view>
-    </div>
-    <footer>
-      <small>&copy; 2015 CenturyLink - The ImageLayers project is provided under the Apache 2.0 license. All Rights Reserved.</small>
-    </footer>
+  <header>
+    <h1 class='logo'>
+      <a href="" title="Home">ImageLayers</a>
+    </h1>
+    <!--<nav>-->
+      <!--<ul>-->
+        <!--<li class='docker-hub'><a href="http://registry.hub.docker.com" target="_blank">Docker Hub</a></li>-->
+        <!--<li class='get-panamax'><a href="http://panamax.io/get-panamax">Get Panamax</a></li>-->
+        <!--<li class='documentation'><a href="http://panamax.io/documentation/">Documentation &amp; Support</a></li>-->
+      <!--</ul>-->
+    <!--</nav>-->
+    <!--<div id="social-icons">-->
+      <!--<a href="https://github.com/CenturyLinkLabs/panamax-ui/wiki" target="_blank" title="Fork Us on GitHub" class="github"></a>-->
+      <!--<a href="http://twitter.com/panamax_io" target="_blank" title="Follow Us on Twitter" class="twitter"></a>-->
+    <!--</div>-->
+    <cite class='logo'>
+      <a href="" title="CenturyLink">CenturyLink</a>
+    </cite>
+  </header>
+  <main ng-view>
+  </main>
+  <footer>
+    <div class="logo"></div>
+    <small>&copy; 2015 CenturyLink - The ImageLayers project is provided under the Apache 2.0 license. All Rights Reserved.</small>
+  </footer>
       <script src="/assets/scripts/vendor/jquery-1.11.2.min.js"></script>
       <script src="/assets/scripts/vendor/angular.min.js"></script>
       <script src="/assets/scripts/vendor/angular-route.min.js"></script>
