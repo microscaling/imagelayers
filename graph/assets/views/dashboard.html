@@ -1,3 +1,71 @@
+<script type="text/vnd.graphviz" id="cluster">
+digraph docker {
+"48a32043e6f2" -> "9c89db2c9f1a"
+"9c89db2c9f1a" [label="9c89db2c9f1a\nimage-graph:latest",shape=box,fillcolor="#eeaaff",style="filled"];
+"44db00b5e7b4" -> "48a32043e6f2"
+"a35289a72e0c" -> "44db00b5e7b4"
+"ff13e837f952" -> "b6c2b9784b57"
+"b6c2b9784b57" -> "a35289a72e0c"
+"83dcb85da57d" -> "ff13e837f952"
+"c0f812f06cc3" -> "83dcb85da57d"
+"4755baee8125" -> "c0f812f06cc3"
+"c37e2655aef5" -> "c9b1025597db"
+"c9b1025597db" -> "06444a73eae7"
+"06444a73eae7" [label="06444a73eae7\nhello-world-example:latest",shape=box,fillcolor="#eeaaff",style="filled"];
+"95ba7123d08f" -> "dc340b767840"
+"dc340b767840" -> "c37e2655aef5"
+"a3ded7bc0e52" -> "a71250f36cca"
+"a71250f36cca" [label="a71250f36cca\nhello-world:latest",shape=box,fillcolor="#eeaaff",style="filled"];
+"56123955aed5" -> "a3ded7bc0e52"
+"40269152d503" -> "95ba7123d08f"
+"a12e26b37a7a" -> "56123955aed5"
+"95ba7123d08f" -> "a12e26b37a7a"
+"fee80066f44d" -> "4755baee8125"
+"4755baee8125" [label="4755baee8125\nhello-world-dynamic:latest",shape=box,fillcolor="#eeaaff",style="filled"];
+"4755baee8125" -> "40269152d503"
+"8f5377b24b45" -> "f9a4e624999d"
+"f9a4e624999d" [label="f9a4e624999d\ncenturylink/ruby-base:2.2\ncenturylink/ruby-base:2.2.0\ncenturylink/ruby-base:latest\ncenturylink/ruby-base:2",shape=box,fillcolor="#eeaaff",style="filled"];
+"3ba51b5d1763" -> "8f5377b24b45"
+"ada1e3877935" -> "3ba51b5d1763"
+"c0a4200b9096" -> "ada1e3877935"
+"f700be1e0fef" -> "c0a4200b9096"
+"20334b63fab0" -> "f700be1e0fef"
+"c50897436315" -> "20334b63fab0"
+"f6fab3b798be" -> "c50897436315"
+"f10807909bc5" -> "f6fab3b798be"
+"511136ea3c5a" -> "f10807909bc5"
+"29e3b896ceac" -> "fee80066f44d"
+"fee80066f44d" [label="fee80066f44d\ncenturylink/ruby-base:2.1.2",shape=box,fillcolor="#eeaaff",style="filled"];
+"2bd22c52209e" -> "29e3b896ceac"
+"e24313e6085d" -> "2bd22c52209e"
+"dc56016b1e83" -> "e24313e6085d"
+"0d5aefc5caad" -> "dc56016b1e83"
+"34a8845af764" -> "0d5aefc5caad"
+"eaa485617400" -> "34a8845af764"
+"feb755848a9a" -> "eaa485617400"
+"5a7d9470be44" -> "feb755848a9a"
+"511136ea3c5a" -> "5a7d9470be44"
+"c850f66a4431" -> "c25b2f76835c"
+"c25b2f76835c" [label="c25b2f76835c\ncenturylink/image-graph:latest",shape=box,fillcolor="#eeaaff",style="filled"];
+"26a72397d8de" -> "c850f66a4431"
+"b24f160092e8" -> "26a72397d8de"
+"38f6b2ef3168" -> "b24f160092e8"
+"7f813233e292" -> "38f6b2ef3168"
+"f7ad8e5d45f9" -> "7f813233e292"
+"6956297f7173" -> "f7ad8e5d45f9"
+"735ab6cb4c06" -> "6956297f7173"
+"ad972d2393e9" -> "735ab6cb4c06"
+"d2b72d637542" -> "ad972d2393e9"
+"e8ba318bbb7c" -> "d2b72d637542"
+"b4304c5652e5" -> "e8ba318bbb7c"
+"1454f718191c" -> "b4304c5652e5"
+"c1eec48018ed" -> "1454f718191c"
+"a9d9abc9a8a0" -> "c1eec48018ed"
+"511136ea3c5a" -> "a9d9abc9a8a0"
+base -> "511136ea3c5a" [style=invis]
+base [style=invisible, shape=box]
+}
+</script>
 <section class="metrics">
   <ul>
     <li>
@@ -30,14 +98,42 @@
   <h3>Docker Images</h3>
   <input type="text" placeholder="Find a layer or tag">
 </section>
-<section class="graph">
-  <ul class="image">
-    <li ng-repeat="layer in layers" class="repeat-animation">
-        <span class="id">
-          {{ layer.id }}
-        </span>
-        <span ng-bind-html='layer.Size | size' class="size">
-        </span>
-    </li>
-  </ul>
+
+<section class="graph" id="graph">
+  <!--<ul class="image">-->
+    <!--<li ng-repeat="layer in layers" class="repeat-animation">-->
+        <!--<span class="id">-->
+          <!--{{ layer.id }}-->
+        <!--</span>-->
+        <!--<span ng-bind-html='layer.Size | size' class="size">-->
+        <!--</span>-->
+    <!--</li>-->
+  <!--</ul>-->
 </section>
+
+<script>
+
+  function inspect(s) {
+    return "<pre>" + s.replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/\"/g, "&quot;") + "</pre>"
+  }
+
+  function src(id) {
+    return document.getElementById(id).innerHTML;
+  }
+
+  function graph(id, format, engine) {
+    var result;
+    try {
+      result = Viz(src(id), format, engine);
+      if (format === "svg")
+        return result;
+      else
+        return inspect(result);
+    } catch(e) {
+      return inspect(e.toString());
+    }
+  }
+
+  document.getElementById("graph").innerHTML+= graph("cluster", "svg");
+
+</script>

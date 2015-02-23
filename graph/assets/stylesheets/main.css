@@ -316,3 +316,17 @@ footer .logo {
   background: url("../images/ctl_logo_base.svg") 0 20px no-repeat white;
   background-size: 140px 30px;
 }
+
+
+svg {
+  margin: 0 auto;
+  display: block;
+}
+
+#graph0 > polygon {
+  fill-opacity: 0;
+}
+
+ellipse {
+  fill: white;
+}
