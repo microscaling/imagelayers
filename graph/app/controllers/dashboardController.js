@@ -45,7 +45,7 @@ angular.module ('iLayers')
           for (var i=0; i < layers.length; i++) {
             count += 1;
             size += layers[i].Size;
-            ave = size / count;
+            ave = Math.floor(size / count);
             largest = Math.max(largest, layers[i].Size);
           };
           // animate the numbers
@@ -53,13 +53,36 @@ angular.module ('iLayers')
           sequential('size', 0, size, 520);
           sequential('ave', 0, ave, 520);
           sequential('largest', 0, largest, 520);
+        };
+
+        var buildTerms = function(data) {
+          var terms = data.split(','),
+              search_terms = [];
+
+          for (var i=0; i < terms.length; i++) {
+            var name = terms[i].split(":")[0],
+                tag = "latest";
+            if (terms[i].lastIndexOf(':') != -1) {
+              tag = terms[i].split(":")[1]
+            }
+            search_terms.push({
+              "name": name.trim(),
+              "tag": tag
+            });
+          }
+
+          return search_terms;
+        };
+
+        $scope.searchImages = function(images) {
+          var search_terms = buildTerms(images);
+
+          // Load Data
+          registryService.inspect(search_terms).then(function(response){
+              $scope.layers = response.data;
+              calculateMetrics(response.data);
+          });
         }
 
-
-        // Load Data
-        registryService.inspect().then(function(response){
-            $scope.layers = response.data;
-            calculateMetrics(response.data);
-        });
 
   }]);
