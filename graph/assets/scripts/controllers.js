@@ -1,8 +1,12 @@
 'use strict';
 
-angular.module ('iLayers')
-  .controller ('DashboardCtrl', ['$scope', '$timeout', 'registryService',
-      function ($scope, $timeout, registryService) {
+angular.module('iLayers')
+  .controller('DashboardCtrl', ['$scope', '$timeout', 'registryService',
+      function($scope, $timeout, registryService) {
+
+        var self = this;
+
+        // public
         $scope.layers = [];
 
         $scope.metrics = {
@@ -10,9 +14,21 @@ angular.module ('iLayers')
           size: 0,
           ave: 0,
           largest: 0
-        }
+        };
 
-        var sequential = function (key, start, end, duration) {
+        $scope.searchImages = function(images) {
+          var search_terms = self.buildTerms(images);
+
+          // Load Data
+          registryService.inspect(search_terms).then(function(response){
+              $scope.layers = response.data;
+              self.calculateMetrics(response.data);
+          });
+        };
+
+
+        // private
+        self.sequential = function(key, start, end, duration) {
             var range = end - start;
             var minTimer = 50;
 
@@ -27,7 +43,7 @@ angular.module ('iLayers')
             var endTime = startTime + duration;
             var timer;
 
-            function run () {
+            function run() {
                 var now = new Date().getTime();
                 var remaining = Math.max((endTime - now) / duration, 0);
                 var value = Math.round(end - (remaining * range));
@@ -40,7 +56,7 @@ angular.module ('iLayers')
             run();
         };
 
-        var calculateMetrics = function (layers) {
+        self.calculateMetrics = function(layers) {
           var count  = 0, size = 0, ave = 0, largest = 0;
           for (var i=0; i < layers.length; i++) {
             count += 1;
@@ -49,13 +65,13 @@ angular.module ('iLayers')
             largest = Math.max(largest, layers[i].Size);
           };
           // animate the numbers
-          sequential('count', 0, count, 600);
-          sequential('size', 0, size, 520);
-          sequential('ave', 0, ave, 520);
-          sequential('largest', 0, largest, 520);
+          self.sequential ('count', 0, count, 600);
+          self.sequential ('size', 0, size, 520);
+          self.sequential ('ave', 0, ave, 520);
+          self.sequential ('largest', 0, largest, 520);
         };
 
-        var buildTerms = function(data) {
+        self.buildTerms = function(data) {
           var terms = data.split(','),
               search_terms = [];
 
@@ -73,16 +89,4 @@ angular.module ('iLayers')
 
           return search_terms;
         };
-
-        $scope.searchImages = function(images) {
-          var search_terms = buildTerms(images);
-
-          // Load Data
-          registryService.inspect(search_terms).then(function(response){
-              $scope.layers = response.data;
-              calculateMetrics(response.data);
-          });
-        }
-
-
   }]);
