@@ -1,8 +1,8 @@
 'use strict';
 
-angular.module ('iLayers')
-  .factory ('registryService', ['$http',
-    function ($http) {
+angular.module('iLayers')
+  .factory('registryService', ['$http',
+    function($http) {
 
       return {
           inspect: function (repo_list) {
