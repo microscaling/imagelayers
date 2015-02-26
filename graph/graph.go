@@ -20,13 +20,13 @@ func Routes(context string, router *server.Router) {
 	router.AddRoutes(context, routes)
 
 	// Add Static Route
-	path := context + "/assets"
+	path := context
 	router.PathPrefix(path).Handler(http.FileServer(http.Dir("./graph")))
 }
 
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	t := template.New("index.html")
-	t, err := t.ParseFiles("graph/tmpl/index.html")
+	t, err := t.ParseFiles("graph/index.html")
 	if err != nil {
 		panic(err)
 	}
