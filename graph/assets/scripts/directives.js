@@ -8,4 +8,9 @@ angular.module('iLayers')
       restrict: 'E'
     }
 
+angular.module ('iLayers')
+  .directive('journal', function() {
+    return {
+      restrict: 'E'
+    }
   });

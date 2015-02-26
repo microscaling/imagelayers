@@ -20,6 +20,11 @@ type Request struct {
 	Repos []Repo `json:"repos"`
 }
 
+type Response struct {
+	Repo   *Repo                     `json:"repo"`
+	Layers []*registry.ImageMetadata `json:"layers"`
+}
+
 type Repo struct {
 	Name string `json:"name"`
 	Tag  string `json:"tag"`
@@ -71,29 +76,34 @@ func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		panic(err)
 	}
-	layers, _ := reg.inspectImages(request.Repos)
+	res, _ := reg.inspectImages(request.Repos)
+
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(layers)
+	json.NewEncoder(w).Encode(res)
 }
 
-func (reg *registryApi) inspectImages(images []Repo) ([]*registry.ImageMetadata, error) {
-	list := make([]*registry.ImageMetadata, 0)
+func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
+	list := make([]*Response, len(images))
 
 	// Goroutine for metadata
-	for _, image := range images {
+	for idx, image := range images {
 		reg.connection.Connect(image.Name)
 		id, _ := reg.connection.GetImageID(image.Name, image.Tag)
 		layers, _ := reg.connection.GetAncestry(id)
-		metadata := reg.loadMetaData(layers)
-		list = append(list, metadata...)
+		metadata := reg.loadMetaData(image, layers)
+		list[idx] = metadata
 	}
 
 	return list, nil
 }
 
-func (reg *registryApi) loadMetaData(layers []string) []*registry.ImageMetadata {
+func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 	var wg sync.WaitGroup
+	res := new(Response)
+	res.Repo = &repo
+
+
 	list := make([]*registry.ImageMetadata, len(layers))
 
 	for i, layerID := range layers {
@@ -105,5 +115,6 @@ func (reg *registryApi) loadMetaData(layers []string) []*registry.ImageMetadata 
 		}(i, layerID)
 	}
 	wg.Wait()
-	return list
+	res.Layers = list
+	return res
 }

@@ -205,8 +205,7 @@ section input[type="text"] {
 /* Graph */
 
 main {
-  margin: 60px 0 0;
-  padding-bottom: 60px;
+  margin: 0;
   height: auto;
   min-height: 90%;
 }
@@ -306,12 +305,25 @@ p
   margin-top: 3px;
 }
 
-/* Footer */
+/* Journal */
+section.journal {
+  width: 100%;
+  min-height: 100px;
+  background: #2d2d2d;
+  position: fixed;
+  bottom: 30px;
+  left: 0;
+  z-index: 10;
+  padding: 20px;
+}
 
+/* Footer */
 footer {
-  margin-top: -60px;
   padding: 0 20px;
   background: white;
+  height: 30px;
+  position: absolute;
+  bottom: 0;
 }
 
 footer small {
@@ -321,7 +333,7 @@ footer small {
 }
 
 footer .logo {
-  height: 70px;
+  height: 30px;
   width: 170px;
   display: inline-block;
   background: url("../images/ctl_logo_base.svg") 0 20px no-repeat white;
