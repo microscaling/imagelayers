@@ -9,7 +9,7 @@ angular.module ('iLayers', ['ngRoute', 'ngAnimate'])
 
       $routeProvider
       .when ('/', {
-        templateUrl: 'assets/views/dashboard.html',
+        templateUrl: 'app/views/dashboard.html',
         controller: 'DashboardCtrl'
 
       })

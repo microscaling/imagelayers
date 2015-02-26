@@ -32,7 +32,7 @@ func (s *layerServer) createRouter() server.Router {
 	router := server.Router{mux.NewRouter()}
 
 	registry.Routes("/registry", &router)
-	graph.Routes("", &router)
+	graph.Routes("/", &router)
 
 	return router
 }

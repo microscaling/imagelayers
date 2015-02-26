@@ -25,7 +25,7 @@ func TestGraphRoute(t *testing.T) {
 	setupServer()
 	defer teardownServer()
 
-	path := srv.URL + "/graph"
+	path := srv.URL
 	resp, err := http.DefaultClient.Get(path)
 
 	assert.Nil(t, err)
