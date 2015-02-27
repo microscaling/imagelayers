@@ -310,7 +310,7 @@ section.journal {
   min-height: 100px;
   background: #2d2d2d;
   position: fixed;
-  bottom: 30px;
+  bottom: 0;
   left: 0;
   z-index: 10;
   padding: 20px;
