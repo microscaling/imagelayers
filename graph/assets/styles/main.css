@@ -29,9 +29,8 @@ body {
 header {
   width: 100%;
   overflow: hidden;
-  background: #8EC643;
+  background: #d8d8d8;
   height: 60px;
-  position: absolute;
   top: 0;
 }
 
@@ -54,7 +53,7 @@ header .logo a {
   white-space: nowrap;
   text-indent: -9999px;
   color: transparent;
-  background: url('../images/logo.png') no-repeat center center;
+  background: url('../images/logo_image_layers.svg') no-repeat center center;
   background-size: 100%;
   width: 100%;
   display: block;
@@ -67,7 +66,7 @@ header h1.logo {
 }
 
 header h1.logo a {
-  background: url('../images/logo.png') no-repeat center center;
+  background: url('../images/logo_image_layers.svg') no-repeat center center;
   background-size: 100%;
 }
 
@@ -76,8 +75,8 @@ header cite.logo {
 }
 
 header cite.logo a {
-  background: url('../images/ctl-logo-white.png') no-repeat center center;
-  background-size: 100%;
+  background: url("../images/ctl_logo_base.svg") 0 15px no-repeat;
+  background-size: 140px 30px;
 }
 
 header nav {
