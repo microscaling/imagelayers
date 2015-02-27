@@ -207,6 +207,8 @@ main {
   margin: 0;
   height: auto;
   min-height: 90%;
+  padding-bottom: 100px;
+  overflow: auto;
 }
 
 main h2 {
@@ -218,10 +220,40 @@ main small {
   display: block;
 }
 
+div.leaves {
+  width: 100%;
+  height: 70px;
+  margin-top: 28px;
+  border-bottom: 1px solid #b3b3b3;
+}
+
+div.leaves section {
+  min-width: 140px;
+  margin-left: 20px;
+  height: 100%;
+  padding: 16px;
+  font-size: 0.85em;
+  text-align: center;
+  background: #c5c5c5;
+  color: #2d2d2d;
+  display: inline-block;
+}
+
+div.leaves section:hover {
+  cursor: pointer;
+  background: #fff;
+}
+
+div.leaves .size {
+  font-size: 1.3em;
+  font-weight: bold;
+}
+
 section.graph ul{
   padding: 10px;
   margin: 0 auto;
   width: 30%;
+  float: left;
 }
 
 section.graph ul li {
@@ -314,6 +346,16 @@ section.journal {
   left: 0;
   z-index: 10;
   padding: 20px;
+  font-size: 0.8em;
+  color: #a0a0a0;
+}
+
+section.journal li {
+  margin: 5px 0;
+}
+
+section.journal li:last-child {
+  color: #fff;
 }
 
 /* Footer */

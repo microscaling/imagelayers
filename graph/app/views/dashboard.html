@@ -4,9 +4,15 @@
   <search></search>
 </section>
 <section class="graph">
+  <div class="leaves" ng-show="graph.length > 0">
+       <section ng-repeat="image in graph">
+           <div>{{ image.repo.name }}:{{ image.repo.tag }}</div>
+           <div class="size" ng-bind-html="image.repo.size | size "></div>
+      </section>
+  </div>
   <div ng-repeat="image in graph">
       <ul class="image">
-        <li ng-repeat="layer in image.layers" class="repeat-animation">
+        <li ng-repeat="layer in image.layers" class="repeat-animation" ng-mouseenter="highlightCommand(image, $index)">
             <span class="id">
               {{ layer.id }}
             </span>
@@ -16,7 +22,11 @@
       </ul>
   </div>
 </section>
-<section class="journal"></section>
+<section class="journal">
+    <ul>
+        <li ng-repeat='command in commands'>{{ command }}</li>
+    </ul>
+</section>
 <!--footer>
 >>>>>>> feature/journal
   <div class="logo"></div>

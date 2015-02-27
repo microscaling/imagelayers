@@ -26,8 +26,9 @@ type Response struct {
 }
 
 type Repo struct {
-	Name string `json:"name"`
-	Tag  string `json:"tag"`
+	Name string  `json:"name"`
+	Tag  string  `json:"tag"`
+	Size   int64 `json:"size"`
 }
 
 type RegistryConnection interface {
@@ -100,6 +101,7 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 
 func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 	var wg sync.WaitGroup
+	var totalSize int64
 	res := new(Response)
 	res.Repo = &repo
 
@@ -115,6 +117,10 @@ func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 		}(i, layerID)
 	}
 	wg.Wait()
+	for _, layer := range list {
+	    totalSize += layer.Size
+	}
 	res.Layers = list
+	res.Repo.Size = totalSize
 	return res
 }

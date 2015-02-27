@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('iLayers')
-  .controller('DashboardCtrl', ['$scope', 'registryService',
-      function($scope, registryService) {
+  .controller('DashboardCtrl', ['$scope', 'registryService', 'commandService',
+      function($scope, registryService, commandService) {
 
         var self = this;
 
@@ -36,5 +36,13 @@ angular.module('iLayers')
           registryService.inspect(search_terms).then(function(response){
               $scope.graph = response.data;
           });
+        };
+
+        $scope.highlightCommand = function(image, idx) {
+          commandService.highlight(image.layers.slice(0, idx+1));
+        };
+
+        $scope.clearCommands = function() {
+          commandService.clear();
         };
   }]);
