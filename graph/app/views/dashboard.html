@@ -1,49 +1,23 @@
-<section class="metrics">
-  <ul>
-    <li>
-      <dl>
-        <dt>Total Number of Layers:</dt>
-        <dd>{{ metrics.count }}</dd>
-      </dl>
-    </li>
-    <li>
-      <dl>
-        <dt>Total Physical Size:</dt>
-        <dd ng-bind-html='metrics.size | size'></dd>
-      </dl>
-    </li>
-    <li>
-      <dl>
-        <dt>Average Size:</dt>
-        <dd ng-bind-html='metrics.ave | size'></dd>
-      </dl>
-    </li>
-    <li>
-      <dl>
-        <dt>Largest Size:</dt>
-        <dd ng-bind-html='metrics.largest | size'></dd>
-      </dl>
-    </li>
-  </ul>
-</section>
+<section class="metrics" graph='graph'></section>
 <section class="search">
   <h3>Docker Images</h3>
   <search></search>
 </section>
 <section class="graph">
-  <ul class="image">
-    <li ng-repeat="layer in layers" class="repeat-animation">
-        <span class="id">
-          {{ layer.id }}
-        </span>
-        <span ng-bind-html='layer.Size | size' class="size">
-        </span>
-    </li>
-  </ul>
+  <div ng-repeat="image in graph">
+      <ul class="image">
+        <li ng-repeat="layer in image.layers" class="repeat-animation">
+            <span class="id">
+              {{ layer.id }}
+            </span>
+            <span ng-bind-html='layer.Size | size' class="size">
+            </span>
+        </li>
+      </ul>
+  </div>
 </section>
-<section class="journal">
-</section>
-<footer>
+<section class="journal"></section>
+<!--footer>
   <div class="logo"></div>
   <small>&copy; 2015 CenturyLink - The ImageLayers project is provided under the Apache 2.0 license. All Rights Reserved.</small>
-</footer>
+</footer-->
