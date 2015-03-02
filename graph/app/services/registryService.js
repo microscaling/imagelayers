@@ -6,6 +6,7 @@ angular.module('iLayers')
 
       return {
           inspect: function (repo_list) {
+            //return $http.post("/registry/analyze", { "repos": [{"name": "centurylink/image-graph", "tag": "latest"}] });
             return $http.post("/registry/analyze", { "repos": repo_list });
           }
       };
