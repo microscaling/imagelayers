@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('iLayers')
-  .controller('DashboardCtrl', ['$scope', 'registryService',
-      function($scope, registryService) {
+  .controller('DashboardCtrl', ['$scope', '$routeParams', 'registryService',
+      function($scope, $routeParams, registryService) {
 
         var self = this;
 
@@ -26,15 +26,20 @@ angular.module('iLayers')
           return search_terms;
         };
 
+        self.searchImages = function(route) {
+          if (route.images !== undefined) {
+            var search_terms = self.buildTerms(route.images);
+
+            // Load Data
+            registryService.inspect(search_terms).then(function(response){
+              $scope.graph = response.data;
+            });
+          }
+        };
+
         // public
         $scope.graph = [];
 
-        $scope.searchImages = function(images) {
-          var search_terms = self.buildTerms(images);
-
-          // Load Data
-          registryService.inspect(search_terms).then(function(response){
-              $scope.graph = response.data;
-          });
-        };
+        // Load data from RouteParams
+        self.searchImages($routeParams);
   }]);

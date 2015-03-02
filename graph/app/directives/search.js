@@ -5,7 +5,14 @@ angular.module('iLayers')
 
     return {
       templateUrl: 'app/views/search.html',
-      restrict: 'E'
+      restrict: 'E',
+      scope: {},
+
+      controller: function($scope, $location) {
+         $scope.changeSearch = function(newSearch) {
+           $location.search('images', newSearch);
+         };
+      }
     }
 
   });
