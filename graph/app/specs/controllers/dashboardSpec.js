@@ -2,10 +2,12 @@ describe('DashboardCtrl', function() {
   // Load the module
   beforeEach(module('iLayers'));
 
-  var ctrl, scope, layers;
+  var ctrl, scope, layers, registryService;
 
-  beforeEach(inject(function ($controller, $rootScope) {
+  beforeEach(inject(function ($controller, $rootScope, _registryService_) {
     scope = $rootScope.$new();
+
+    registryService = _registryService_;
 
     ctrl = $controller('DashboardCtrl', {
       $scope: scope
@@ -41,6 +43,25 @@ describe('DashboardCtrl', function() {
       expect(angular
                .equals(data[1], { "name": "baz", "tag": "2.0.0" }))
                .toBeTruthy();
+    });
+  });
+
+  describe('searchImages', function() {
+
+    beforeEach(inject(function($q) {
+      deferredSuccess = $q.defer();
+      spyOn(registryService, 'inspect').and.returnValue(deferredSuccess.promise);
+      deferredSuccess.resolve({data: {'repo': {}, 'layers': []}});
+    }));
+
+    it('should do nothing when no images provided', function() {
+      ctrl.searchImages({});
+      expect(registryService.inspect).not.toHaveBeenCalled();
+    });
+
+    it('should call registryService with provided images', function() {
+      ctrl.searchImages({'images': 'foo,bar:1.0.0'});
+      expect(registryService.inspect).toHaveBeenCalledWith([{"name":"foo","tag":"latest"}, {"name":"bar","tag":"1.0.0"}]);
     });
   });
 });
