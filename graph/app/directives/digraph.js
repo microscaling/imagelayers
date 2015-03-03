@@ -14,7 +14,6 @@ angular.module ('iLayers')
         $scope.composeDigraph = function(graph) {
           var layerData = digraphHelper(graph, "", 0);
           var digraph = "digraph docker { " + layerData + "\n base [style=invisible]\n}";
-          console.log('composeDigraph');
           return digraph;
         };
 
@@ -29,15 +28,15 @@ angular.module ('iLayers')
 
           if (parent_id == "") {
             //digraph += "base -> \"" + id + "\" [style=invis];"; 
-            digraph += line_break + "base -> \"511136ea3c5\" [style=invis]"
+            digraph += line_break + "base -> \"511136ea3c5\" [style=invis, fontname=\"Arial\"]"
           }
 
           else {
-            digraph += line_break + "\"" + parent_id +  "\"    -> \"" + id +"\"";
+            digraph += line_break + "\"" + parent_id +  "\" -> \"" + id +"\"[dir=none, len=\".3\"]";
           }
 
           if (tags == null) {
-            digraph += line_break + "\"" + id + "\" [label=\"" + id + " " + tags + "\",shape=box,fillcolor=\"paleturquoise\",style=\"filled,rounded\"];";
+            digraph += line_break + "\"" + id + "\" [label=\"" + id + " " + tags + "\",shape=box,setlinewidth=0,fillcolor=\"#1E6E93\",fontcolor=\"#ffffff\",style=\"filled\"];";
           }
             return digraphHelper(layers, digraph, i+1);
         };
@@ -50,7 +49,7 @@ angular.module ('iLayers')
           for (var i=0; i< scope.graph.length; i++) {
             layers = layers.concat(scope.graph[i].layers);
             dotfile = scope.composeDigraph(layers);
-            $timeout(function() { $('#graph').replaceWith(displayGraph(dotfile)); }, 2000);
+            $timeout(function() { $('#graph').replaceWith("<section id='graph'>" + displayGraph(dotfile) + "</section>"); }, 2000);
           }
 
           function displayGraph(source, engine) {
@@ -58,7 +57,6 @@ angular.module ('iLayers')
             try {
               result = Viz(source, 'svg', engine);
               return result;
-              console.log("result is: " + result);
             } catch(e) {
               // TODO figure out error handling for this app
             }

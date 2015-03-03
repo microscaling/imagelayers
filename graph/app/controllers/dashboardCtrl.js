@@ -34,7 +34,8 @@ angular.module('iLayers')
 
           // Load Data
           registryService.inspect(search_terms).then(function(response){
-              $('#graph').append("<div class='loading'>Loading...</div>")
+              // TODO get yer DOM outta my controller
+              $('#graph').append("<div class='loading'>Loading...</div>");
               $scope.graph = response.data;
           });
         };
