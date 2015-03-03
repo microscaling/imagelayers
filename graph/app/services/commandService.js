@@ -3,8 +3,6 @@
 angular.module('iLayers')
   .factory('commandService', ['$rootScope',
     function($rootScope) {
-
-
       return {
           highlight: function (layers) {
             var cmds = [];
