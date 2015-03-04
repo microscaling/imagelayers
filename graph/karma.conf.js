@@ -25,7 +25,7 @@ module.exports = function(config) {
       'filters/**/*.js',
       'services/**/*.js',
       'directives/**/*.js',
-      'specs/**/*.js',
+      '../specs/**/*.js',
       '**/*.html'
     ],
 

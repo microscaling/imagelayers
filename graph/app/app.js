@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('iLayers', ['ngRoute', 'ngAnimate'])
+angular.module('iLayers', ['ngRoute', 'ngAnimate', 'ngDialog'])
   .config(['$httpProvider', '$locationProvider', '$routeProvider',
     function($httpProvider, $locationProvider, $routeProvider) {
       $httpProvider.defaults.withCredentials = false;

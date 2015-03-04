@@ -49,4 +49,4 @@ angular.module('iLayers')
 
         // Load data from RouteParams
         self.searchImages($routeParams);
-  }]);
+    }]);

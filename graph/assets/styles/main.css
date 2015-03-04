@@ -186,9 +186,44 @@ section.search {
 }
 
 section.search h3 {
-  display: inline-block;
+  float: left;
   margin-top: 18px;
   margin-left: 40px;
+}
+
+section.search .search-dialog {
+  margin: 19px 10px;
+  float: left;
+  position: relative;
+  text-decoration: underline;
+  padding-left: 25px;
+}
+
+section.search .search-dialog:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+section.search .search-dialog:before {
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: #91B748;
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+}
+
+section.search .search-dialog:after {
+  content: '';
+  background: url(../images/plus-white.svg) 50% 50% no-repeat;
+  background-size: 10px 10px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 0;
 }
 
 section input[type="text"] {

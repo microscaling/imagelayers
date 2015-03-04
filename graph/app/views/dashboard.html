@@ -1,7 +1,8 @@
-<section class="metrics" graph='graph'></section>
-<section class="search">
+<section class="metrics" data-graph='graph' metrics></section>
+<section class="search" ng-controller="SearchCtrl as search">
   <h3>Docker Images</h3>
-  <search></search>
+    <div class="search-dialog" ng-click="showSearch()">Add Images</div>
+  <input type='text' placeholder='Filter by Layer...' >
 </section>
 <section class="graph">
   <div class="leaves" ng-show="graph.length > 0">
@@ -22,13 +23,8 @@
       </ul>
   </div>
 </section>
-<section class="journal">
+<section class="journal" journal>
     <ul>
         <li ng-repeat='command in commands'>{{ command }}</li>
     </ul>
 </section>
-<!--footer>
->>>>>>> feature/journal
-  <div class="logo"></div>
-  <small>&copy; 2015 CenturyLink - The ImageLayers project is provided under the Apache 2.0 license. All Rights Reserved.</small>
-</footer-->

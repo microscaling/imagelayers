@@ -5,7 +5,7 @@ angular.module('iLayers')
 
     return {
       templateUrl: 'app/views/metrics.html',
-      restrict: 'C',
+      restrict: 'A',
       scope: {
         graph: '='
       },
