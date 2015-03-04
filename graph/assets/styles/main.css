@@ -53,8 +53,6 @@ header .logo a {
   white-space: nowrap;
   text-indent: -9999px;
   color: transparent;
-  background: url('../images/logo_image_layers.svg') no-repeat center center;
-  background-size: 100%;
   width: 100%;
   display: block;
   height: 54px;
@@ -66,7 +64,7 @@ header h1.logo {
 }
 
 header h1.logo a {
-  background: url('../images/logo_image_layers.svg') no-repeat center center;
+  background: url('../images/logo_image_layers.svg') no-repeat 10px center;
   background-size: 100%;
 }
 

@@ -13,7 +13,9 @@ angular.module ('iLayers')
 
         $scope.composeDigraph = function(graph) {
           var layerData = digraphHelper(graph, "", 0);
-          var digraph = "digraph docker { " + layerData + "\n base [style=invisible]\n}";
+          var nodeStyles = "node [style=filled, fillcolor=\"#1E6E93\",color=\"#1E6E93\",fontname=\"Arial\",fontcolor=\"#ffffff\",fontsize=12,shape=box];";
+          var edgeStyles = "edge [dir=none,color=\"#666666\",len=\"0.2\"];";
+          var digraph = "strict digraph docker { ratio=\"fill\"" + nodeStyles + edgeStyles + layerData + "\n base [style=invisible]\n}";
           return digraph;
         };
 
@@ -21,6 +23,7 @@ angular.module ('iLayers')
         var digraphHelper = function(layers, digraph, i) {
           if (layers[i] == null) return digraph;
 
+          debugger
           var id = layers[i].id.substring(0, 11);
           var tags = null;
           var parent_id = layers[i].parent.substring(0, 11);
@@ -28,15 +31,15 @@ angular.module ('iLayers')
 
           if (parent_id == "") {
             //digraph += "base -> \"" + id + "\" [style=invis];"; 
-            digraph += line_break + "base -> \"511136ea3c5\" [style=invis, fontname=\"Arial\"]"
+            digraph += line_break + "base -> \"511136ea3c5\" [style=invis]"
           }
 
           else {
-            digraph += line_break + "\"" + parent_id +  "\" -> \"" + id +"\"[dir=none, len=\".3\"]";
+            digraph += line_break + "\"" + parent_id +  "\" -> \"" + id + "\"";
           }
 
           if (tags == null) {
-            digraph += line_break + "\"" + id + "\" [label=\"" + id + " " + tags + "\",shape=box,setlinewidth=0,fillcolor=\"#1E6E93\",fontcolor=\"#ffffff\",style=\"filled\"];";
+            digraph += line_break + "\"" + id + "\" [label=\"" + id + " " + tags + "\",fillcolor=\"#1E6E93\"];";
           }
             return digraphHelper(layers, digraph, i+1);
         };
@@ -49,7 +52,7 @@ angular.module ('iLayers')
           for (var i=0; i< scope.graph.length; i++) {
             layers = layers.concat(scope.graph[i].layers);
             dotfile = scope.composeDigraph(layers);
-            $timeout(function() { $('#graph').replaceWith("<section id='graph'>" + displayGraph(dotfile) + "</section>"); }, 2000);
+           $('#graph').replaceWith("<section id='graph'>" + displayGraph(dotfile) + "</section>");
           }
 
           function displayGraph(source, engine) {
