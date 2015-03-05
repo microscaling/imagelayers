@@ -133,7 +133,7 @@ func TestSearchRequest(t *testing.T) {
 }
 
 
-func TestGetTagsRequest(t *testing.T) {
+func TestGetTagsRequestWithSlash(t *testing.T) {
 	// setup
 	image := "centurylink/dray"
 	fakeConn := new(mockConnection)
@@ -143,10 +143,10 @@ func TestGetTagsRequest(t *testing.T) {
 	fakeConn.On("GetTags", image).Return(res, nil)
 
 	// build request
-	req, _ := http.NewRequest("GET", "http://localhost/images/centurylink:dray/tags", strings.NewReader("{}"))
+	req, _ := http.NewRequest("GET", "http://localhost/images/centurylink%2Fdray/tags", strings.NewReader("{}"))
 	w := httptest.NewRecorder()
 	m := mux.NewRouter()
-    	m.HandleFunc("/images/{name}/tags", api.handleTags).Methods("GET")
+	m.HandleFunc("/images/{front}/{tail}/tags", api.handleTags).Methods("GET")
 
 	// test
     	m.ServeHTTP(w, req)
@@ -154,5 +154,28 @@ func TestGetTagsRequest(t *testing.T) {
 	// asserts
 	fakeConn.AssertExpectations(t)
 }
+
+func TestGetTagsRequest(t *testing.T) {
+	// setup
+	image := "redis"
+	fakeConn := new(mockConnection)
+	api := newRegistryApi(fakeConn)
+	var res registry.TagMap
+	fakeConn.On("Connect", image).Return(nil)
+	fakeConn.On("GetTags", image).Return(res, nil)
+
+	// build request
+	req, _ := http.NewRequest("GET", "http://localhost/images/redis/tags", strings.NewReader("{}"))
+	w := httptest.NewRecorder()
+	m := mux.NewRouter()
+	m.HandleFunc("/images/{front}/tags", api.handleTags).Methods("GET")
+
+	// test
+    	m.ServeHTTP(w, req)
+
+	// asserts
+	fakeConn.AssertExpectations(t)
+}
+
 
 

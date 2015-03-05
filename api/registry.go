@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-	"strings"
 	"sync"
 
 	"github.com/gorilla/mux"
@@ -54,9 +53,10 @@ func newRegistryApi(conn RegistryConnection) *registryApi {
 func (reg *registryApi) Routes(context string, router *server.Router) {
 	routes := map[string]map[string]http.HandlerFunc{
 		"GET": {
-			"/status":             reg.handleStatus,
-			"/search":             reg.handleSearch,
-			"/images/{name}/tags": reg.handleTags,
+			"/status":                     reg.handleStatus,
+			"/search":                     reg.handleSearch,
+			"/images/{front}/tags":        reg.handleTags,
+			"/images/{front}/{tail}/tags": reg.handleTags,
 		},
 		"POST": {
 			"/analyze": reg.handleAnalysis,
@@ -67,14 +67,15 @@ func (reg *registryApi) Routes(context string, router *server.Router) {
 }
 
 func (reg *registryApi) handleTags(w http.ResponseWriter, r *http.Request) {
-	image := strings.Replace(mux.Vars(r)["name"], ":", "/",-1)
-	log.Printf("image name: %s", image)
+	image := mux.Vars(r)["front"]
+	tail  := mux.Vars(r)["tail"]
+
+	if tail != "" {
+	  image	= image + "/" + tail
+	}
 
 	reg.connection.Connect(image)
-	res, err := reg.connection.GetTags(image)
-	if err != nil {
-		panic(err)
-	}
+	res, _ := reg.connection.GetTags(image)
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
