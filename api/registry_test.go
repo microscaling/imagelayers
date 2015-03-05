@@ -7,6 +7,7 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/gorilla/mux"
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
@@ -14,6 +15,16 @@ import (
 
 type mockConnection struct {
 	mock.Mock
+}
+
+func (m *mockConnection) GetTags(name string) (registry.TagMap, error) {
+	args := m.Mock.Called(name)
+	return args.Get(0).(registry.TagMap), nil
+}
+
+func (m *mockConnection) Search(name string) (*registry.SearchResults, error) {
+	args := m.Mock.Called(name)
+	return args.Get(0).(*registry.SearchResults), nil
 }
 
 func (m *mockConnection) Status() (Status, error) {
@@ -102,3 +113,46 @@ func TestStatusRequest(t *testing.T) {
 	// asserts
 	fakeConn.AssertExpectations(t)
 }
+
+func TestSearchRequest(t *testing.T) {
+	// setup
+	fakeConn := new(mockConnection)
+	api := newRegistryApi(fakeConn)
+
+	// build request
+	req, _ := http.NewRequest("GET", "http://localhost/search?name=foo", strings.NewReader("{}"))
+	w := httptest.NewRecorder()
+
+	// test
+	results := new(registry.SearchResults)
+	fakeConn.On("Search", "foo").Return(results, nil)
+	api.handleSearch(w, req)
+
+	// asserts
+	fakeConn.AssertExpectations(t)
+}
+
+
+func TestGetTagsRequest(t *testing.T) {
+	// setup
+	image := "centurylink/dray"
+	fakeConn := new(mockConnection)
+	api := newRegistryApi(fakeConn)
+	var res registry.TagMap
+	fakeConn.On("Connect", image).Return(nil)
+	fakeConn.On("GetTags", image).Return(res, nil)
+
+	// build request
+	req, _ := http.NewRequest("GET", "http://localhost/images/centurylink:dray/tags", strings.NewReader("{}"))
+	w := httptest.NewRecorder()
+	m := mux.NewRouter()
+    	m.HandleFunc("/images/{name}/tags", api.handleTags).Methods("GET")
+
+	// test
+    	m.ServeHTTP(w, req)
+
+	// asserts
+	fakeConn.AssertExpectations(t)
+}
+
+

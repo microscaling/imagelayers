@@ -5,8 +5,10 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"strings"
 	"sync"
 
+	"github.com/gorilla/mux"
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 	"github.com/CenturyLinkLabs/imagelayers/server"
 )
@@ -37,6 +39,8 @@ type RegistryConnection interface {
 	GetImageID(string, string) (string, error)
 	GetAncestry(string) ([]string, error)
 	GetMetadata(string) (*registry.ImageMetadata, error)
+	GetTags(string)(registry.TagMap, error)
+	Search(string) (*registry.SearchResults, error)
 }
 
 type registryApi struct {
@@ -50,7 +54,9 @@ func newRegistryApi(conn RegistryConnection) *registryApi {
 func (reg *registryApi) Routes(context string, router *server.Router) {
 	routes := map[string]map[string]http.HandlerFunc{
 		"GET": {
-			"/status": reg.handleStatus,
+			"/status":             reg.handleStatus,
+			"/search":             reg.handleSearch,
+			"/images/{name}/tags": reg.handleTags,
 		},
 		"POST": {
 			"/analyze": reg.handleAnalysis,
@@ -59,6 +65,29 @@ func (reg *registryApi) Routes(context string, router *server.Router) {
 
 	router.AddCorsRoutes(context, routes)
 }
+
+func (reg *registryApi) handleTags(w http.ResponseWriter, r *http.Request) {
+	image := strings.Replace(mux.Vars(r)["name"], ":", "/",-1)
+	log.Printf("image name: %s", image)
+
+	reg.connection.Connect(image)
+	res, err := reg.connection.GetTags(image)
+	if err != nil {
+		panic(err)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
+}
+
+func (reg *registryApi) handleSearch(w http.ResponseWriter, r *http.Request) {
+	value := r.FormValue("name")
+	res, _ := reg.connection.Search(value)
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(res)
+}
+
 
 func (reg *registryApi) handleStatus(w http.ResponseWriter, r *http.Request) {
 	status, _ := reg.connection.Status()

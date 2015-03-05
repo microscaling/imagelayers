@@ -7,6 +7,9 @@ angular.module('iLayers')
       return {
           inspect: function (repo_list) {
             return $http.post("/registry/analyze", { "repos": repo_list });
+          },
+          search: function(name) {
+            return $http.get("/registry/search?name="+name);
           }
       };
   }]);
