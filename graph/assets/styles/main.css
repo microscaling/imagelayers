@@ -133,6 +133,44 @@ header nav ul li a:hover {
   background-image: url("../images/logo_twitter_white.svg");
 }
 
+.plus-button {
+  margin-top: 21px;
+  float: left;
+  position: relative;
+  text-decoration: underline;
+  padding-left: 30px;
+}
+
+.plus-button:hover {
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.plus-button:before {
+  content: '';
+  width: 20px;
+  height: 20px;
+  border-radius: 10px;
+  background: #91B748;
+  position: absolute;
+  display: block;
+  top: 0;
+  left: 0;
+}
+
+.plus-button:after {
+  content: '';
+  background: url(../images/plus-white.svg) 50% 50% no-repeat;
+  background-size: 10px 10px;
+  display: block;
+  width: 20px;
+  height: 20px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
+
 /* Metrics */
 section.metrics {
   width: 100%;
@@ -191,39 +229,8 @@ section.search h3 {
   margin-left: 40px;
 }
 
-section.search .search-dialog {
-  margin: 19px 10px;
-  float: left;
-  position: relative;
-  text-decoration: underline;
-  padding-left: 25px;
-}
-
-section.search .search-dialog:hover {
-  text-decoration: none;
-  cursor: pointer;
-}
-
-section.search .search-dialog:before {
-  width: 20px;
-  height: 20px;
-  border-radius: 10px;
-  background: #91B748;
-  position: absolute;
-  display: block;
-  top: 0;
-  left: 0;
-}
-
-section.search .search-dialog:after {
-  content: '';
-  background: url(../images/plus-white.svg) 50% 50% no-repeat;
-  background-size: 10px 10px;
-  display: block;
-  width: 20px;
-  height: 20px;
-  position: absolute;
-  left: 0;
+section.search .plus-button {
+  margin-left: 15px;
 }
 
 section input[type="text"] {

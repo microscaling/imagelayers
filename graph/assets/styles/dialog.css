@@ -93,19 +93,15 @@ body.ngdialog-open {
 }
 
 .ngdialog.ngdialog-theme-layers .ngdialog-close:before {
-  background: transparent;
-  border-radius: 3px;
-  color: #bbb;
-  content: '\00D7';
-  font-size: 26px;
-  font-weight: 400;
+  background: url(../images/cross.svg) top left no-repeat;
+  background-size: 30px 30px;
+  content: '';
   height: 30px;
-  line-height: 26px;
-  position: absolute;
-  right: 3px;
-  text-align: center;
-  top: 3px;
   width: 30px;
+  position: absolute;
+  right: 18px;
+  top: 14px;
+
 }
 
 .ngdialog.ngdialog-theme-layers .ngdialog-close:hover:before,
@@ -158,15 +154,21 @@ body.ngdialog-open {
   font-size: 1.2em;
 }
 
+.ngdialog.ngdialog-theme-layers aside {
+  width: 100%;
+  border-bottom: 1px solid #d8d8d8;
+  padding: 20px;
+}
+
 .ngdialog.ngdialog-theme-layers main {
-  padding: 10px;
+  padding: 20px;
 }
 
 .ngdialog.ngdialog-theme-layers footer {
   border-top: 1px solid #d8d8d8;
   height: 79px;
   width: 100%;
-  padding-top: 10px;
+  padding-top: 20px;
   position: static;
 }
 
@@ -223,3 +225,13 @@ body.ngdialog-open {
   background: #4b4b4b;
   color: #fff;
 }
+
+.ngdialog.ngdialog-theme-layers input[type=text] {
+  float: none;
+}
+
+.ngdialog.ngdialog-theme-layers .image-name {
+  width: 438px;
+}
+
+
