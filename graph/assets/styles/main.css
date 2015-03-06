@@ -249,8 +249,9 @@ main {
   margin: 0;
   height: auto;
   min-height: 90%;
-  padding-bottom: 100px;
+  padding-bottom: 140px;
   overflow: auto;
+
 }
 
 main h2 {
@@ -270,7 +271,7 @@ div.leaves {
 }
 
 div.leaves section {
-  min-width: 140px;
+  width: 180px;
   margin-left: 20px;
   height: 100%;
   padding: 16px;
@@ -291,43 +292,54 @@ div.leaves .size {
   font-weight: bold;
 }
 
-section.graph ul{
+section.graph .box {
   padding: 10px;
-  margin: 0 auto;
-  width: 30%;
   float: left;
-}
-
-section.graph ul li {
-  background: #2d2d2d;
-  width: 100%;
-  display: block;
-  margin: 10px 0;
-  color: #fff;
-  padding: 10px 0;
+  background: #fff;
+  color: #222;
+  margin: 20px 0 0 20px;
   position: relative;
+  height: 60px;
 }
 
-section.graph ul li:after {
-  height: 16px;
-  width: 50%;
-  border-right: 2px solid #2d2d2d;
-  position: absolute;
-  bottom: -16px;
-  left: 0;
-  content: '';
+section.graph .box.small {
+  height: 60px;
 }
 
-section.graph ul li:last-child {
-  background-color: #fff;
-  color: #000;
+section.graph .box.medium {
+  height: 80px;
 }
 
-section.graph ul li:last-child:after {
-  display: none;
+section.graph .box.large {
+  height: 100px;
 }
 
-section.graph ul li > span {
+section.graph .box.env {
+  background: #a0a0a0;
+  color: #fff;
+}
+
+section.graph .box.cmd {
+  background: #17628A;
+  color: #fff;
+}
+
+section.graph .box.add {
+  background: #5E913F;
+  color: #fff;
+}
+
+section.graph .box.curl {
+  background: #E8581E;
+  color: #fff;
+}
+
+section.graph .box.empty {
+  background: transparent;
+  width: 180px;
+}
+
+section.graph .box > span {
   display: block;
   max-width: 120px;
   margin: 0 auto;
@@ -337,10 +349,16 @@ section.graph ul li > span {
   text-align: center;
 }
 
-section.graph ul li span.size {
+section.graph .box span.size {
   font-weight: bold;
   font-size: 1.3em;
   margin-top: 6px;
+}
+
+section.graph .noop {
+  width: 0;
+  height: 0;
+  display: none;
 }
 
 .layer {
@@ -382,6 +400,8 @@ p
 section.journal {
   width: 100%;
   min-height: 100px;
+  max-height: 150px;
+  overflow: auto;
   background: #2d2d2d;
   position: fixed;
   bottom: 0;
@@ -396,7 +416,7 @@ section.journal li {
   margin: 5px 0;
 }
 
-section.journal li:last-child {
+section.journal li:first-child {
   color: #fff;
 }
 

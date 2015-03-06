@@ -4,24 +4,7 @@
     <div class="plus-button" ng-click="showSearch()">Add Images</div>
   <input type='text' placeholder='Filter by Layer...' >
 </section>
-<section class="graph">
-  <div class="leaves" ng-show="graph.length > 0">
-       <section ng-repeat="image in graph">
-           <div>{{ image.repo.name }}:{{ image.repo.tag }}</div>
-           <div class="size" ng-bind-html="image.repo.size | size "></div>
-      </section>
-  </div>
-  <div ng-repeat="image in graph">
-      <ul class="image">
-        <li ng-repeat="layer in image.layers" class="repeat-animation" ng-mouseenter="highlightCommand(image, $index)">
-            <span class="id">
-              {{ layer.id }}
-            </span>
-            <span ng-bind-html='layer.Size | size' class="size">
-            </span>
-        </li>
-      </ul>
-  </div>
+<section class="graph" data-graph="graph" grid>
 </section>
 <section class="journal" journal>
     <ul>

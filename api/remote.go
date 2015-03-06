@@ -21,7 +21,7 @@ func (rc *remoteConnection) GetTags(name string) (registry.TagMap, error) {
 }
 
 func (rc *remoteConnection) Search(name string) (*registry.SearchResults, error) {
-	return rc.client.Search.Query(name, 1, 5)
+	return rc.client.Search.Query(name, 1, 10)
 }
 
 func (rc *remoteConnection) Status() (Status, error) {

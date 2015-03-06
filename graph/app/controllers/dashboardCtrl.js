@@ -39,14 +39,6 @@ angular.module('iLayers')
         // public
         $scope.graph = [];
 
-        $scope.highlightCommand = function(image, idx) {
-          commandService.highlight(image.layers.slice(0, idx+1));
-        };
-
-        $scope.clearCommands = function() {
-          commandService.clear();
-        };
-
         // Load data from RouteParams
         self.searchImages($routeParams);
     }]);
