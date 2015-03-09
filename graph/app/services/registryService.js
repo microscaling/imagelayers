@@ -10,6 +10,9 @@ angular.module('iLayers')
           },
           search: function(name) {
             return $http.get("/registry/search?name="+name);
+          },
+          find_tags: function(name) {
+            return $http.get("/registry/images/"+name+"/tags");
           }
       };
   }]);

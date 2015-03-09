@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('iLayers')
-  .controller('SearchCtrl', ['$scope', '$location', '$sce', 'ngDialog', 'registryService',
-      function($scope, $location, $sce, ngDialog, registryService) {
+  .controller('SearchCtrl', ['$scope', '$location', 'ngDialog',
+      function($scope, $location, ngDialog) {
         var self = this;
 
         self.buildQueryParams = function(list) {
@@ -18,31 +18,7 @@ angular.module('iLayers')
           return params.join(',');
         };
 
-        self.suggestImages = function(term) {
-          if (term.length > 2) {
-            return registryService.search(term).then(function(response){
-              var data = response.data.results,
-                  list = [];
-
-              for (var i=0; i < data.length; i++) {
-                list.push({ 'label': $sce.trustAsHtml(data[i].name), 'value': data[i].name});
-              };
-              return list;
-            });
-          } else {
-             return []
-          }
-
-        };
-
-
-
         $scope.searchList = [];
-
-        $scope.autocomplete_options = {
-          suggest: self.suggestImages,
-          on_error: console.log
-        };
 
         $scope.showSearch = function() {
           $scope.searchList = [];

@@ -166,7 +166,8 @@ body.ngdialog-open {
 }
 
 .ngdialog.ngdialog-theme-layers main section {
-   position: relative;
+  position: relative;
+  counter-reset: autocomplete;
 }
 
 .ngdialog.ngdialog-theme-layers footer {
@@ -240,6 +241,7 @@ body.ngdialog-open {
 }
 
 .ngdialog.ngdialog-theme-layers .image-name {
+  counter-increment: autocomplete;
   width: 438px;
 }
 
@@ -254,8 +256,8 @@ body.ngdialog-open {
   -ms-transform: translate3d(0, 0, 0);
   -o-transform: translate3d(0, 0, 0);
   transform: translate3d(0, 0, 0);
-  z-index: 19999;
-  top: 50px !important;
+  position: absolute;
+  z-index: 9999;
   left: 0 !important;
 }
 .ac-container .ac-menu {
@@ -287,5 +289,21 @@ body.ngdialog-open {
   outline: none;
   background-color: #e0eaff;
 }
+
+.styled-select {
+  float:left;
+}
+
+.styled-select select {
+   background: transparent;
+   width: 268px;
+   padding: 5px;
+   font-size: 16px;
+   line-height: 1;
+   border: 0;
+   border-radius: 0;
+   height: 34px;
+   -webkit-appearance: none;
+   }
 
 

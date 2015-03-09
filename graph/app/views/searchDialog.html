@@ -6,8 +6,7 @@
 </aside>
 <main>
     <section ng-repeat="item in searchList" mass-autocomplete>
-        <input type="text" class="image-name" ng-model="item.name" mass-autocomplete-item="autocomplete_options">
-        <input type="text" class="image-tag" ng-model="item.tag">
+        <div image-search data-model="item"></div>
     </section>
     <div class="plus-button" ng-click="addRow()">Add Another Row</div>
 </main>
