@@ -9,7 +9,6 @@ import (
 	"github.com/gorilla/mux"
 	"github.com/CenturyLinkLabs/imagelayers/server"
 	"github.com/CenturyLinkLabs/imagelayers/api"
-	"github.com/CenturyLinkLabs/imagelayers/graph"
 )
 
 type layerServer struct {
@@ -32,7 +31,6 @@ func (s *layerServer) createRouter() server.Router {
 	router := server.Router{mux.NewRouter()}
 
 	registry.Routes("/registry", &router)
-	graph.Routes("/", &router)
 
 	return router
 }
