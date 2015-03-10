@@ -1,3 +1,3 @@
 # Imagelayers
 
-ImageLayers creates a graphical representation of image layers from one or more docker images. The images could be provided by name or the tool could use the local image cache.
+ImageLayers provides services to search and analyze mulitple images within the docker registry. [Imagelayers Graph](https://github.com/CenturyLinkLabs/imagelayers-graph/) is an example interface using these services.

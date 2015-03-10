@@ -1,4 +1,4 @@
-package api
+package api // import "github.com/CenturyLinkLabs/imagelayers/api"
 
 import (
 	"encoding/json"

@@ -36,7 +36,7 @@ func (s *layerServer) createRouter() server.Router {
 }
 
 func main() {
-	port := flag.Int("p", 9000, "port on which the server will run")
+	port := flag.Int("p", 8888, "port on which the server will run")
 	flag.Parse()
 
 	s := NewServer()

@@ -21,18 +21,6 @@ func teardownServer() {
 	srv.Close()
 }
 
-func TestGraphRoute(t *testing.T) {
-	setupServer()
-	defer teardownServer()
-
-	path := srv.URL
-	resp, err := http.DefaultClient.Get(path)
-
-	assert.Nil(t, err)
-	assert.Equal(t, 200, resp.StatusCode)
-}
-
-
 func TestStatusGetSuccess (t *testing.T) {
 	setupServer()
 	defer teardownServer()
@@ -47,7 +35,6 @@ func TestStatusGetSuccess (t *testing.T) {
 	assert.Equal(t, 200, resp.StatusCode)
 	assert.Equal(t, srv.URL, resp.Header.Get("Access-Control-Allow-Origin"), "CORS Allow-Origin not set")
 }
-
 
 func TestAnalyzePostSuccess (t *testing.T) {
 	setupServer()
