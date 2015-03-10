@@ -1,0 +1,27 @@
+machine:
+  services:
+    - docker
+  environment:
+    GOPATH: $PWD
+    PATH: $PATH:$GOPATH/bin
+
+dependencies:
+  override:
+  - mkdir -p ~/src/github.com/CenturyLinkLabs/imagelayers
+  - cp -avr ~/imagelayers ~/src/github.com/CenturyLinkLabs
+  - go get github.com/tools/godep
+  - go get github.com/stretchr/testify
+
+test:
+  override:
+  - cd ~/src/github.com/CenturyLinkLabs/imagelayers && godep go test -v ./...
+
+deployment:
+  hub:
+    branch: master
+    commands:
+      - docker run -v $(pwd):/src centurylink/golang-builder:latest
+      - docker build -t centurylink/imagelayers-api:qa .
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push centurylink/imagelayers-api:qa
+      - ssh root@$QA_SERVER_IP "./imagelayers_api.sh"

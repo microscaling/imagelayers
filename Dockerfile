@@ -1,5 +1,5 @@
-FROM scratch
+FROM centurylink/ca-certs
 MAINTAINER CenturyLink Labs <clt-labs-futuretech@centurylink.com>
-EXPOSE 9000
+EXPOSE 8888
 COPY imagelayers /
 ENTRYPOINT ["/imagelayers"]

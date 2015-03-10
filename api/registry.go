@@ -83,6 +83,7 @@ func (reg *registryApi) handleTags(w http.ResponseWriter, r *http.Request) {
 
 func (reg *registryApi) handleSearch(w http.ResponseWriter, r *http.Request) {
 	value := r.FormValue("name")
+
 	res, _ := reg.connection.Search(value)
 
 	w.Header().Set("Content-Type", "application/json")

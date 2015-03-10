@@ -1,0 +1,2 @@
+#!/bin/bash
+ssh root@8.22.8.236 "docker rm -f imagelayers_api; docker rmi -f centurylink/imagelayers-api:qa; docker pull centurylink/imagelayers-api:qa; docker run -d --name imagelayers_api -p 8888:8888 centurylink/imagelayers-api:qa"
