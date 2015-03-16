@@ -10,7 +10,6 @@ dependencies:
   - mkdir -p ~/src/github.com/CenturyLinkLabs/imagelayers
   - cp -avr ~/imagelayers ~/src/github.com/CenturyLinkLabs
   - go get github.com/tools/godep
-  - go get github.com/stretchr/testify
 
 test:
   override:
