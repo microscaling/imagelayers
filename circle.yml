@@ -1,23 +1,25 @@
 machine:
   services:
     - docker
-  environment:
-    GOPATH: $PWD
-    PATH: $PATH:$GOPATH/bin
+
+general:
+  artifacts:
+    - "imagelayers-api" # the built binary
 
 dependencies:
   override:
-  - mkdir -p ~/src/github.com/CenturyLinkLabs/imagelayers
-  - cp -avr ~/imagelayers ~/src/github.com/CenturyLinkLabs
-  - go get github.com/tools/godep
+    # This is a no-op to get it to not try and build our Go app (and possibly
+    # fail due to Godep stuff).
+    - "true"
 
 test:
   override:
-  - cd ~/src/github.com/CenturyLinkLabs/imagelayers && godep go test -v ./...
+    - docker run -v $(pwd):/src centurylink/golang-tester
 
 deployment:
   hub:
     branch: master
+    owner: CenturyLinkLabs
     commands:
       - docker run -v $(pwd):/src centurylink/golang-builder:latest
       - docker build -t centurylink/imagelayers-api:qa .
