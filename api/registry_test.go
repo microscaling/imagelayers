@@ -66,7 +66,7 @@ func TestMarshalRequest(t *testing.T) {
 	repos := Request{Repos: imageList}
 	jsonTest, _ := json.Marshal(repos)
 
-	assert.Equal(t, `{"repos":[{"name":"foo","tag":"latest","size":0},{"name":"bar","tag":"latest","size":0}]}`, string(jsonTest))
+	assert.Equal(t, `{"repos":[{"name":"foo","tag":"latest","size":0,"count":0},{"name":"bar","tag":"latest","size":0,"count":0}]}`, string(jsonTest))
 }
 
 func TestAnalyzeRequest(t *testing.T) {

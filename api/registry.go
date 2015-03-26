@@ -30,6 +30,7 @@ type Repo struct {
 	Name string  `json:"name"`
 	Tag  string  `json:"tag"`
 	Size   int64 `json:"size"`
+	Count  int   `json:"count"`
 }
 
 type RegistryConnection interface {
@@ -136,7 +137,6 @@ func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 	res := new(Response)
 	res.Repo = &repo
 
-
 	list := make([]*registry.ImageMetadata, len(layers))
 
 	for i, layerID := range layers {
@@ -153,5 +153,6 @@ func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 	}
 	res.Layers = list
 	res.Repo.Size = totalSize
+	res.Repo.Count = len(layers)
 	return res
 }
