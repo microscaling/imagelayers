@@ -6,10 +6,16 @@ import (
 	"log"
 	"net/http"
 	"sync"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 	"github.com/CenturyLinkLabs/imagelayers/server"
+	"github.com/pmylund/go-cache"
+)
+
+const (
+	cacheDuration = 30 * time.Minute
 )
 
 type Status struct {
@@ -45,10 +51,11 @@ type RegistryConnection interface {
 
 type registryApi struct {
 	connection RegistryConnection
+	layerCache *cache.Cache
 }
 
 func newRegistryApi(conn RegistryConnection) *registryApi {
-	return &registryApi{connection: conn}
+	return &registryApi{connection: conn, layerCache: cache.New(cacheDuration, 0)}
 }
 
 func (reg *registryApi) Routes(context string, router *server.Router) {
@@ -143,7 +150,15 @@ func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 		wg.Add(1)
 		go func(idx int, layer string) {
 			defer wg.Done()
-			m, _ := reg.connection.GetMetadata(layer)
+			var m *registry.ImageMetadata
+
+			val, found := reg.layerCache.Get(layerID)
+			if found {
+				m = val.(*registry.ImageMetadata)
+			} else {
+				m, _ = reg.connection.GetMetadata(layer)
+				reg.layerCache.Set(layerID, m, cache.DefaultExpiration)
+			}
 			list[idx] = m
 		}(i, layerID)
 	}
