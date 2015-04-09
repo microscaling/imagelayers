@@ -2,20 +2,21 @@ package api // import "github.com/CenturyLinkLabs/imagelayers/api"
 
 import (
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"sync"
 	"time"
 
-	"github.com/gorilla/mux"
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
 	"github.com/CenturyLinkLabs/imagelayers/server"
+	"github.com/gorilla/mux"
 	"github.com/pmylund/go-cache"
 )
 
 const (
-	cacheDuration = 30 * time.Minute
+	cacheDuration = 15 * time.Minute
 )
 
 type Status struct {
@@ -33,10 +34,10 @@ type Response struct {
 }
 
 type Repo struct {
-	Name string  `json:"name"`
-	Tag  string  `json:"tag"`
-	Size   int64 `json:"size"`
-	Count  int   `json:"count"`
+	Name  string `json:"name"`
+	Tag   string `json:"tag"`
+	Size  int64  `json:"size"`
+	Count int    `json:"count"`
 }
 
 type RegistryConnection interface {
@@ -45,7 +46,7 @@ type RegistryConnection interface {
 	GetImageID(string, string) (string, error)
 	GetAncestry(string) ([]string, error)
 	GetMetadata(string) (*registry.ImageMetadata, error)
-	GetTags(string)(registry.TagMap, error)
+	GetTags(string) (registry.TagMap, error)
 	Search(string) (*registry.SearchResults, error)
 }
 
@@ -76,10 +77,10 @@ func (reg *registryApi) Routes(context string, router *server.Router) {
 
 func (reg *registryApi) handleTags(w http.ResponseWriter, r *http.Request) {
 	image := mux.Vars(r)["front"]
-	tail  := mux.Vars(r)["tail"]
+	tail := mux.Vars(r)["tail"]
 
 	if tail != "" {
-	  image	= image + "/" + tail
+		image = image + "/" + tail
 	}
 
 	reg.connection.Connect(image)
@@ -97,7 +98,6 @@ func (reg *registryApi) handleSearch(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
-
 
 func (reg *registryApi) handleStatus(w http.ResponseWriter, r *http.Request) {
 	status, _ := reg.connection.Status()
@@ -118,7 +118,6 @@ func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
 	}
 	res, _ := reg.inspectImages(request.Repos)
 
-
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(res)
 }
@@ -128,11 +127,18 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 
 	// Goroutine for metadata
 	for idx, image := range images {
-		reg.connection.Connect(image.Name)
-		id, _ := reg.connection.GetImageID(image.Name, image.Tag)
-		layers, _ := reg.connection.GetAncestry(id)
-		metadata := reg.loadMetaData(image, layers)
-		list[idx] = metadata
+		key := fmt.Sprintf("%s:%s", image.Name, image.Tag)
+		val, found := reg.layerCache.Get(key)
+		if found {
+			list[idx] = val.(*Response)
+		} else {
+			reg.connection.Connect(image.Name)
+			id, _ := reg.connection.GetImageID(image.Name, image.Tag)
+			layers, _ := reg.connection.GetAncestry(id)
+			metadata := reg.loadMetaData(image, layers)
+			reg.layerCache.Set(key, metadata, cache.DefaultExpiration)
+			list[idx] = metadata
+		}
 	}
 
 	return list, nil
@@ -150,21 +156,14 @@ func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 		wg.Add(1)
 		go func(idx int, layer string) {
 			defer wg.Done()
-			var m *registry.ImageMetadata
 
-			val, found := reg.layerCache.Get(layerID)
-			if found {
-				m = val.(*registry.ImageMetadata)
-			} else {
-				m, _ = reg.connection.GetMetadata(layer)
-				reg.layerCache.Set(layerID, m, cache.DefaultExpiration)
-			}
+			m, _ := reg.connection.GetMetadata(layer)
 			list[idx] = m
 		}(i, layerID)
 	}
 	wg.Wait()
 	for _, layer := range list {
-	    totalSize += layer.Size
+		totalSize += layer.Size
 	}
 	res.Layers = list
 	res.Repo.Size = totalSize

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/gorilla/mux"
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
+	"github.com/gorilla/mux"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -132,7 +132,6 @@ func TestSearchRequest(t *testing.T) {
 	fakeConn.AssertExpectations(t)
 }
 
-
 func TestGetTagsRequestWithSlash(t *testing.T) {
 	// setup
 	image := "centurylink/dray"
@@ -149,7 +148,7 @@ func TestGetTagsRequestWithSlash(t *testing.T) {
 	m.HandleFunc("/images/{front}/{tail}/tags", api.handleTags).Methods("GET")
 
 	// test
-    	m.ServeHTTP(w, req)
+	m.ServeHTTP(w, req)
 
 	// asserts
 	fakeConn.AssertExpectations(t)
@@ -171,11 +170,8 @@ func TestGetTagsRequest(t *testing.T) {
 	m.HandleFunc("/images/{front}/tags", api.handleTags).Methods("GET")
 
 	// test
-    	m.ServeHTTP(w, req)
+	m.ServeHTTP(w, req)
 
 	// asserts
 	fakeConn.AssertExpectations(t)
 }
-
-
-
