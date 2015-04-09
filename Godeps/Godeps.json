@@ -18,6 +18,10 @@
 			"Rev": "e444e69cbd2e2e3e0749a2f3c717cec491552bbf"
 		},
 		{
+			"ImportPath": "github.com/pmylund/go-cache",
+			"Rev": "93d85800f2fa6bd0a739e7bd612bfa3bc008b72d"
+		},
+		{
 			"ImportPath": "github.com/rs/cors",
 			"Rev": "6e0c3cb65fc0fdb064c743d176a620e3ca446dfb"
 		},
