@@ -7,7 +7,7 @@
 	"Deps": [
 		{
 			"ImportPath": "github.com/CenturyLinkLabs/docker-reg-client/registry",
-			"Rev": "5fe337eb9ef3131282d70259fa89cc93d87e1200"
+			"Rev": "47279889f8120995fa96a051691a776361a6eebb"
 		},
 		{
 			"ImportPath": "github.com/gorilla/context",

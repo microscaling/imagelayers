@@ -30,6 +30,25 @@ func TestHubGetReadToken(t *testing.T) {
 	assert.Equal(t, host, auth.Host)
 }
 
+func TestHubGetReadToken_Error(t *testing.T) {
+	setup()
+	defer teardown()
+
+	mux.HandleFunc("/repositories/foo/images", func(w http.ResponseWriter, r *http.Request) {
+		assert.Equal(t, "GET", r.Method)
+		assert.Equal(t, "true", r.Header.Get("X-Docker-Token"))
+
+		w.WriteHeader(http.StatusNotFound)
+	})
+
+	_, err := client.Hub.GetReadToken("foo")
+
+	assert.EqualError(t, err, "Server returned status 404")
+	assert.IsType(t, RegistryError{}, err)
+	re, _ := err.(RegistryError)
+	assert.Equal(t, 404, re.Code)
+}
+
 func TestHubGetWriteToken(t *testing.T) {
 	setup()
 	defer teardown()

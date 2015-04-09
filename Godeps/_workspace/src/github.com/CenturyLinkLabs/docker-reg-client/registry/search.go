@@ -11,6 +11,8 @@ type SearchService struct {
 	client *Client
 }
 
+// SearchResults represents the list of SearchResult structs returned from a
+// search against the registry.
 type SearchResults struct {
 	NumPages   int            `json:"num_pages"`
 	NumResults int            `json:"num_results"`
@@ -20,6 +22,8 @@ type SearchResults struct {
 	Page       int            `json:"page,string"`
 }
 
+// SearchResult represents a single result returned from a search against the
+// registry.
 type SearchResult struct {
 	Name        string `json:"name"`
 	IsAutomated bool   `json:"is_automated"`
@@ -29,6 +33,11 @@ type SearchResult struct {
 	Description string `json:"description"`
 }
 
+// Searches the registry for the given term. The page argument is the page
+// number for the desired results. The num argument is the number of results
+// to be returned per page.
+//
+// Docker Registry API docs: https://docs.docker.com/reference/api/registry_api/#search
 func (s *SearchService) Query(query string, page, num int) (*SearchResults, error) {
 	params := url.Values{}
 	params.Add("q", query)

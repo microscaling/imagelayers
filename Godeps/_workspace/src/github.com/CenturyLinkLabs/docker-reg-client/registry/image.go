@@ -11,6 +11,7 @@ type ImageService struct {
 	client *Client
 }
 
+// ImageMetadata represents metadata about an image layer.
 type ImageMetadata struct {
 	ID              string           `json:"id"`
 	Parent          string           `json:"parent"`
@@ -26,6 +27,7 @@ type ImageMetadata struct {
 	Size            int64            `json:"Size"`
 }
 
+// ContainerConfig is the list of configuration options used when creating a container.
 type ContainerConfig struct {
 	HostName        string              `json:"Hostname"`
 	DomainName      string              `json:"Domainname"`
@@ -55,6 +57,10 @@ type ContainerConfig struct {
 	OnBuild         []string            `json:"OnBuild"`
 }
 
+// Retrieve the layer for a given image ID. Contents of the layer will be
+// written to the provided io.Writer.
+//
+// Docker Registry API docs: https://docs.docker.com/reference/api/registry_api/#get-image-layer
 func (i *ImageService) GetLayer(imageID string, layer io.Writer, auth Authenticator) error {
 	path := fmt.Sprintf("images/%s/layer", imageID)
 	req, err := i.client.newRequest("GET", path, auth, layer)
@@ -66,6 +72,10 @@ func (i *ImageService) GetLayer(imageID string, layer io.Writer, auth Authentica
 	return err
 }
 
+// Upload the layer for a given image ID. Contents of the layer will be read
+// from the provided io.Reader.
+//
+// Docker Registry API docs: https://docs.docker.com/reference/api/registry_api/#put-image-layer
 func (i *ImageService) AddLayer(imageID string, layer io.Reader, auth Authenticator) error {
 	path := fmt.Sprintf("images/%s/layer", imageID)
 	req, err := i.client.newRequest("PUT", path, auth, layer)
@@ -77,6 +87,9 @@ func (i *ImageService) AddLayer(imageID string, layer io.Reader, auth Authentica
 	return err
 }
 
+// Retrieve the layer metadata for a given image ID.
+//
+// Docker Registry API docs: https://docs.docker.com/reference/api/registry_api/#get-image-layer_1
 func (i *ImageService) GetMetadata(imageID string, auth Authenticator) (*ImageMetadata, error) {
 	path := fmt.Sprintf("images/%s/json", imageID)
 	req, err := i.client.newRequest("GET", path, auth, nil)
@@ -93,6 +106,9 @@ func (i *ImageService) GetMetadata(imageID string, auth Authenticator) (*ImageMe
 	return meta, nil
 }
 
+// Upload the layer metadata for a given image ID.
+//
+// Docker Registry API docs: https://docs.docker.com/reference/api/registry_api/#put-image-layer_1
 func (i *ImageService) AddMetadata(imageID string, metadata *ImageMetadata, auth Authenticator) error {
 	path := fmt.Sprintf("images/%s/json", imageID)
 	req, err := i.client.newRequest("PUT", path, auth, metadata)
@@ -106,6 +122,9 @@ func (i *ImageService) AddMetadata(imageID string, metadata *ImageMetadata, auth
 	return err
 }
 
+// Retrieve the ancestry for an image given an image ID.
+//
+// Docker Registry API docs: https://docs.docker.com/reference/api/registry_api/#get-image-ancestry
 func (i *ImageService) GetAncestry(imageID string, auth Authenticator) ([]string, error) {
 	path := fmt.Sprintf("images/%s/ancestry", imageID)
 	req, err := i.client.newRequest("GET", path, auth, nil)

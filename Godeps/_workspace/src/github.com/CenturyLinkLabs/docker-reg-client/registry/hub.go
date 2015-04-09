@@ -6,10 +6,12 @@ import (
 	"net/url"
 )
 
+// HubService gives acess to the Docker Hub API used to retrieve authentication tokens.
 type HubService struct {
 	client *Client
 }
 
+// Retrieves a read-only token from the Docker Hub for the specified repo.
 func (h *HubService) GetReadToken(repo string) (*TokenAuth, error) {
 	path := fmt.Sprintf("repositories/%s/images", repo)
 	req, err := h.newRequest("GET", path, NilAuth{})
@@ -20,6 +22,19 @@ func (h *HubService) GetReadToken(repo string) (*TokenAuth, error) {
 	return h.do(req)
 }
 
+// Retrieves a read-only token from the Docker Hub for the specified private repo.
+func (h *HubService) GetReadTokenWithAuth(repo string, auth Authenticator) (*TokenAuth, error) {
+	path := fmt.Sprintf("repositories/%s/images", repo)
+	req, err := h.newRequest("GET", path, auth)
+	if err != nil {
+		return nil, err
+	}
+
+	return h.do(req)
+}
+
+// Retrieves a write-only token from the Docker Hub for the specified repo. The
+// auth argument should be the user's basic auth credentials.
 func (h *HubService) GetWriteToken(repo string, auth Authenticator) (*TokenAuth, error) {
 	path := fmt.Sprintf("repositories/%s/", repo)
 	req, err := h.newRequest("PUT", path, auth)
@@ -30,6 +45,8 @@ func (h *HubService) GetWriteToken(repo string, auth Authenticator) (*TokenAuth,
 	return h.do(req)
 }
 
+// Retrieves a write-only token from the Docker Hub for the specified repo. The
+// auth argument should be the user's basic auth credentials.
 func (h *HubService) GetDeleteToken(repo string, auth Authenticator) (*TokenAuth, error) {
 	path := fmt.Sprintf("repositories/%s/", repo)
 	req, err := h.newRequest("DELETE", path, auth)
