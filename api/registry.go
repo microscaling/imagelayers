@@ -52,11 +52,16 @@ type RegistryConnection interface {
 
 type registryApi struct {
 	connection RegistryConnection
+	imageCache *cache.Cache
 	layerCache *cache.Cache
 }
 
 func newRegistryApi(conn RegistryConnection) *registryApi {
-	return &registryApi{connection: conn, layerCache: cache.New(cacheDuration, 0)}
+	return &registryApi{
+		connection: conn,
+		imageCache: cache.New(cacheDuration, 0),
+		layerCache: cache.New(cacheDuration, 0),
+	}
 }
 
 func (reg *registryApi) Routes(context string, router *server.Router) {
@@ -128,7 +133,7 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 	// Goroutine for metadata
 	for idx, image := range images {
 		key := fmt.Sprintf("%s:%s", image.Name, image.Tag)
-		val, found := reg.layerCache.Get(key)
+		val, found := reg.imageCache.Get(key)
 		if found {
 			list[idx] = val.(*Response)
 		} else {
@@ -136,7 +141,7 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 			id, _ := reg.connection.GetImageID(image.Name, image.Tag)
 			layers, _ := reg.connection.GetAncestry(id)
 			metadata := reg.loadMetaData(image, layers)
-			reg.layerCache.Set(key, metadata, cache.DefaultExpiration)
+			reg.imageCache.Set(key, metadata, cache.DefaultExpiration)
 			list[idx] = metadata
 		}
 	}
@@ -156,8 +161,15 @@ func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
 		wg.Add(1)
 		go func(idx int, layer string) {
 			defer wg.Done()
+			var m *registry.ImageMetadata
 
-			m, _ := reg.connection.GetMetadata(layer)
+			val, found := reg.layerCache.Get(layer)
+			if found {
+				m = val.(*registry.ImageMetadata)
+			} else {
+				m, _ = reg.connection.GetMetadata(layer)
+				reg.layerCache.Set(layer, m, cache.DefaultExpiration)
+			}
 			list[idx] = m
 		}(i, layerID)
 	}
