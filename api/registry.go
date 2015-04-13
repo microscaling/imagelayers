@@ -128,24 +128,32 @@ func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
 }
 
 func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
+	var wg sync.WaitGroup
 	list := make([]*Response, len(images))
 
-	// Goroutine for metadata
-	for idx, image := range images {
-		key := fmt.Sprintf("%s:%s", image.Name, image.Tag)
-		val, found := reg.imageCache.Get(key)
-		if found {
-			list[idx] = val.(*Response)
-		} else {
-			reg.connection.Connect(image.Name)
-			id, _ := reg.connection.GetImageID(image.Name, image.Tag)
-			layers, _ := reg.connection.GetAncestry(id)
-			metadata := reg.loadMetaData(image, layers)
-			reg.imageCache.Set(key, metadata, cache.DefaultExpiration)
-			list[idx] = metadata
-		}
+	for i, image := range images {
+		wg.Add(1)
+		go func(idx int, img Repo) {
+			defer wg.Done()
+			var resp *Response
+
+			key := fmt.Sprintf("%s:%s", img.Name, img.Tag)
+			val, found := reg.imageCache.Get(key)
+			if found {
+				resp = val.(*Response)
+			} else {
+				reg.connection.Connect(img.Name)
+				id, _ := reg.connection.GetImageID(img.Name, img.Tag)
+				layers, _ := reg.connection.GetAncestry(id)
+				resp = reg.loadMetaData(img, layers)
+				reg.imageCache.Set(key, resp, cache.DefaultExpiration)
+			}
+
+			list[idx] = resp
+		}(i, image)
 	}
 
+	wg.Wait()
 	return list, nil
 }
 
