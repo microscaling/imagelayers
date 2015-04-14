@@ -32,24 +32,9 @@ func (m *mockConnection) Status() (Status, error) {
 	return args.Get(0).(Status), nil
 }
 
-func (m *mockConnection) Connect(repo string) error {
-	args := m.Mock.Called(repo)
-	return args.Error(0)
-}
-
-func (m *mockConnection) GetImageID(image string, tag string) (string, error) {
-	args := m.Mock.Called(image, tag)
-	return args.Get(0).(string), nil
-}
-
-func (m *mockConnection) GetAncestry(id string) ([]string, error) {
-	args := m.Mock.Called(id)
-	return args.Get(0).([]string), nil
-}
-
-func (m *mockConnection) GetMetadata(layer string) (*registry.ImageMetadata, error) {
-	args := m.Mock.Called(layer)
-	return args.Get(0).(*registry.ImageMetadata), nil
+func (m *mockConnection) GetImageLayers(name, tag string) ([]*registry.ImageMetadata, error) {
+	args := m.Mock.Called(name, tag)
+	return args.Get(0).([]*registry.ImageMetadata), nil
 }
 
 func TestMarshalStatus(t *testing.T) {
@@ -73,8 +58,7 @@ func TestAnalyzeRequest(t *testing.T) {
 	// setup
 	fakeConn := new(mockConnection)
 	api := newRegistryApi(fakeConn)
-	layers := []string{"baz"}
-	inBody, image := "{\"repos\":[{\"name\":\"foo\",\"tag\":\"latest\"}]}", "foo"
+	inBody := "{\"repos\":[{\"name\":\"foo\",\"tag\":\"latest\"}]}"
 
 	// build request
 	req, _ := http.NewRequest("POST", "http://localhost/analyze", strings.NewReader(inBody))
@@ -86,10 +70,7 @@ func TestAnalyzeRequest(t *testing.T) {
 	resp[0] = metadata
 
 	// test
-	fakeConn.On("Connect", image).Return(nil)
-	fakeConn.On("GetImageID", image, "latest").Return("fooID")
-	fakeConn.On("GetAncestry", "fooID").Return(layers)
-	fakeConn.On("GetMetadata", "baz").Return(metadata)
+	fakeConn.On("GetImageLayers", "foo", "latest").Return([]*registry.ImageMetadata{metadata})
 	api.handleAnalysis(w, req)
 
 	// asserts
@@ -138,7 +119,6 @@ func TestGetTagsRequestWithSlash(t *testing.T) {
 	fakeConn := new(mockConnection)
 	api := newRegistryApi(fakeConn)
 	var res registry.TagMap
-	fakeConn.On("Connect", image).Return(nil)
 	fakeConn.On("GetTags", image).Return(res, nil)
 
 	// build request
@@ -160,7 +140,6 @@ func TestGetTagsRequest(t *testing.T) {
 	fakeConn := new(mockConnection)
 	api := newRegistryApi(fakeConn)
 	var res registry.TagMap
-	fakeConn.On("Connect", image).Return(nil)
 	fakeConn.On("GetTags", image).Return(res, nil)
 
 	// build request

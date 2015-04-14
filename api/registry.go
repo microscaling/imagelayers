@@ -42,12 +42,9 @@ type Repo struct {
 
 type RegistryConnection interface {
 	Status() (Status, error)
-	Connect(string) error
-	GetImageID(string, string) (string, error)
-	GetAncestry(string) ([]string, error)
-	GetMetadata(string) (*registry.ImageMetadata, error)
 	GetTags(string) (registry.TagMap, error)
 	Search(string) (*registry.SearchResults, error)
+	GetImageLayers(name, tag string) ([]*registry.ImageMetadata, error)
 }
 
 type registryApi struct {
@@ -88,7 +85,6 @@ func (reg *registryApi) handleTags(w http.ResponseWriter, r *http.Request) {
 		image = image + "/" + tail
 	}
 
-	reg.connection.Connect(image)
 	res, _ := reg.connection.GetTags(image)
 
 	w.Header().Set("Content-Type", "application/json")
@@ -142,10 +138,7 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 			if found {
 				resp = val.(*Response)
 			} else {
-				reg.connection.Connect(img.Name)
-				id, _ := reg.connection.GetImageID(img.Name, img.Tag)
-				layers, _ := reg.connection.GetAncestry(id)
-				resp = reg.loadMetaData(img, layers)
+				resp = reg.loadMetaData(img)
 				reg.imageCache.Set(key, resp, cache.DefaultExpiration)
 			}
 
@@ -157,36 +150,18 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 	return list, nil
 }
 
-func (reg *registryApi) loadMetaData(repo Repo, layers []string) *Response {
-	var wg sync.WaitGroup
-	var totalSize int64
-	res := new(Response)
-	res.Repo = &repo
+func (reg *registryApi) loadMetaData(repo Repo) *Response {
+	totalSize := int64(0)
+	resp := new(Response)
+	resp.Repo = &repo
+	resp.Layers, _ = reg.connection.GetImageLayers(repo.Name, repo.Tag)
+	resp.Repo.Count = len(resp.Layers)
 
-	list := make([]*registry.ImageMetadata, len(layers))
-
-	for i, layerID := range layers {
-		wg.Add(1)
-		go func(idx int, layer string) {
-			defer wg.Done()
-			var m *registry.ImageMetadata
-
-			val, found := reg.layerCache.Get(layer)
-			if found {
-				m = val.(*registry.ImageMetadata)
-			} else {
-				m, _ = reg.connection.GetMetadata(layer)
-				reg.layerCache.Set(layer, m, cache.DefaultExpiration)
-			}
-			list[idx] = m
-		}(i, layerID)
-	}
-	wg.Wait()
-	for _, layer := range list {
+	for _, layer := range resp.Layers {
 		totalSize += layer.Size
 	}
-	res.Layers = list
-	res.Repo.Size = totalSize
-	res.Repo.Count = len(layers)
-	return res
+
+	resp.Repo.Size = totalSize
+
+	return resp
 }
