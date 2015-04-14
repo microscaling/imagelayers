@@ -26,3 +26,12 @@ deployment:
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push centurylink/imagelayers-api:qa
       - ssh root@$QA_SERVER_IP "./imagelayers_api.sh"
+  Production:
+    branch: release
+    owner: CenturyLinkLabs
+    commands:
+      - docker run -v $(pwd):/src centurylink/golang-builder:latest
+      - docker build -t centurylink/imagelayers-api:latest .
+      - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
+      - docker push centurylink/imagelayers-api:latest
+      - ssh root@$PRO_SERVER_IP1 "./imagelayers_api.sh"
