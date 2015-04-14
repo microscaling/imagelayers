@@ -50,14 +50,12 @@ type RegistryConnection interface {
 type registryApi struct {
 	connection RegistryConnection
 	imageCache *cache.Cache
-	layerCache *cache.Cache
 }
 
 func newRegistryApi(conn RegistryConnection) *registryApi {
 	return &registryApi{
 		connection: conn,
 		imageCache: cache.New(cacheDuration, 0),
-		layerCache: cache.New(cacheDuration, 0),
 	}
 }
 
