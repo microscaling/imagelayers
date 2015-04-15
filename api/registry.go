@@ -156,7 +156,9 @@ func (reg *registryApi) loadMetaData(repo Repo) *Response {
 	resp.Repo.Count = len(resp.Layers)
 
 	for _, layer := range resp.Layers {
-		totalSize += layer.Size
+		if layer != nil {
+			totalSize += layer.Size
+		}
 	}
 
 	resp.Repo.Size = totalSize
