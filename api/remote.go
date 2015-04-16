@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"sync"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
@@ -23,7 +24,7 @@ func NewRemoteRegistry() *registryApi {
 }
 
 func (rc *remoteConnection) GetTags(name string) (registry.TagMap, error) {
-	auth, err := rc.getAuth(name)
+	auth, err := rc.client.Hub.GetReadToken(name)
 	if err != nil {
 		return nil, err
 	}
@@ -46,17 +47,17 @@ func (rc *remoteConnection) Status() (Status, error) {
 func (rc *remoteConnection) GetImageLayers(name, tag string) ([]*registry.ImageMetadata, error) {
 	var wg sync.WaitGroup
 
-	auth, err := rc.getAuth(name)
+	auth, err := rc.client.Hub.GetReadToken(name)
 	if err != nil {
 		return nil, err
 	}
 
-	id, err := rc.getImageID(auth, name, tag)
+	id, err := rc.client.Repository.GetImageID(name, tag, auth)
 	if err != nil {
 		return nil, err
 	}
 
-	layerIDs, err := rc.getAncestry(auth, id)
+	layerIDs, err := rc.client.Image.GetAncestry(id, auth)
 	if err != nil {
 		return nil, err
 	}
@@ -67,14 +68,17 @@ func (rc *remoteConnection) GetImageLayers(name, tag string) ([]*registry.ImageM
 		wg.Add(1)
 		go func(idx int, lid string) {
 			defer wg.Done()
+			var err error
 			var m *registry.ImageMetadata
 
 			val, found := rc.layerCache.Get(lid)
 			if found {
 				m = val.(*registry.ImageMetadata)
 			} else {
-				m, _ = rc.getMetadata(auth, lid)
-				rc.layerCache.Set(lid, m, cache.DefaultExpiration)
+				m, err = rc.client.Image.GetMetadata(lid, auth)
+				if err == nil && m != nil {
+					rc.layerCache.Set(lid, m, cache.DefaultExpiration)
+				}
 			}
 
 			list[idx] = m
@@ -82,37 +86,12 @@ func (rc *remoteConnection) GetImageLayers(name, tag string) ([]*registry.ImageM
 	}
 	wg.Wait()
 
+	// Return an error if any of the layers are missing
+	for i, layer := range list {
+		if layer == nil {
+			return nil, fmt.Errorf("Error retrieving layer: %s", layerIDs[i])
+		}
+	}
+
 	return list, nil
-}
-
-func (rc *remoteConnection) getAuth(repo string) (registry.Authenticator, error) {
-	return rc.client.Hub.GetReadToken(repo)
-}
-
-func (rc *remoteConnection) getImageID(auth registry.Authenticator, name string, tag string) (string, error) {
-	id, err := rc.client.Repository.GetImageID(name, tag, auth)
-	if err != nil {
-		return "", err
-	}
-
-	return id, nil
-}
-
-func (rc *remoteConnection) getAncestry(auth registry.Authenticator, id string) ([]string, error) {
-	layers, err := rc.client.Image.GetAncestry(id, auth)
-	if err != nil {
-		return nil, err
-	}
-
-	return layers, nil
-
-}
-
-func (rc *remoteConnection) getMetadata(auth registry.Authenticator, layer string) (*registry.ImageMetadata, error) {
-	metadata, err := rc.client.Image.GetMetadata(layer, auth)
-	if err != nil {
-		return nil, err
-	}
-
-	return metadata, nil
 }

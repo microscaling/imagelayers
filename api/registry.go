@@ -31,6 +31,7 @@ type Request struct {
 type Response struct {
 	Repo   *Repo                     `json:"repo"`
 	Layers []*registry.ImageMetadata `json:"layers"`
+	Status int                       `json:"status"`
 }
 
 type Repo struct {
@@ -137,7 +138,9 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 				resp = val.(*Response)
 			} else {
 				resp = reg.loadMetaData(img)
-				reg.imageCache.Set(key, resp, cache.DefaultExpiration)
+				if resp.Status == http.StatusOK {
+					reg.imageCache.Set(key, resp, cache.DefaultExpiration)
+				}
 			}
 
 			list[idx] = resp
@@ -149,19 +152,27 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 }
 
 func (reg *registryApi) loadMetaData(repo Repo) *Response {
-	totalSize := int64(0)
 	resp := new(Response)
 	resp.Repo = &repo
-	resp.Layers, _ = reg.connection.GetImageLayers(repo.Name, repo.Tag)
-	resp.Repo.Count = len(resp.Layers)
 
-	for _, layer := range resp.Layers {
-		if layer != nil {
-			totalSize += layer.Size
+	layers, err := reg.connection.GetImageLayers(repo.Name, repo.Tag)
+	if err == nil {
+		resp.Status = http.StatusOK
+		resp.Layers = layers
+		resp.Repo.Count = len(resp.Layers)
+
+		for _, layer := range resp.Layers {
+			resp.Repo.Size += layer.Size
 		}
+	} else {
+		switch e := err.(type) {
+		case registry.RegistryError:
+			resp.Status = e.Code
+		default:
+			resp.Status = http.StatusInternalServerError
+		}
+		log.Printf("Error: %s", err)
 	}
-
-	resp.Repo.Size = totalSize
 
 	return resp
 }
