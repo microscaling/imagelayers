@@ -16,7 +16,8 @@ import (
 )
 
 const (
-	cacheDuration = 15 * time.Minute
+	cacheDuration        = 15 * time.Minute
+	cacheCleanupInterval = 5 * time.Minute
 )
 
 type Status struct {
@@ -56,7 +57,7 @@ type registryApi struct {
 func newRegistryApi(conn RegistryConnection) *registryApi {
 	return &registryApi{
 		connection: conn,
-		imageCache: cache.New(cacheDuration, 0),
+		imageCache: cache.New(cacheDuration, cacheCleanupInterval),
 	}
 }
 

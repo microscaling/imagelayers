@@ -16,7 +16,7 @@ type remoteConnection struct {
 func NewRemoteRegistry() *registryApi {
 	conn := &remoteConnection{
 		client:     registry.NewClient(),
-		layerCache: cache.New(cacheDuration, 0),
+		layerCache: cache.New(cacheDuration, cacheCleanupInterval),
 	}
 	reg := newRegistryApi(conn)
 
