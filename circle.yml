@@ -34,4 +34,3 @@ deployment:
       - docker build -t centurylink/imagelayers-api:latest .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push centurylink/imagelayers-api:latest
-      - ssh root@$PRO_SERVER_IP1 "./imagelayers_api.sh"
