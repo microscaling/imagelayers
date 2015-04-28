@@ -11,12 +11,14 @@ import (
 type remoteConnection struct {
 	client     *registry.Client
 	layerCache *cache.Cache
+	tagCache   *cache.Cache
 }
 
 func NewRemoteRegistry() *registryApi {
 	conn := &remoteConnection{
 		client:     registry.NewClient(),
 		layerCache: cache.New(cacheDuration, cacheCleanupInterval),
+		tagCache:   cache.New(cacheDuration, cacheCleanupInterval),
 	}
 	reg := newRegistryApi(conn)
 
@@ -24,12 +26,25 @@ func NewRemoteRegistry() *registryApi {
 }
 
 func (rc *remoteConnection) GetTags(name string) (registry.TagMap, error) {
-	auth, err := rc.client.Hub.GetReadToken(name)
-	if err != nil {
-		return nil, err
+	var tags registry.TagMap
+
+	val, found := rc.tagCache.Get(name)
+	if found {
+		tags = val.(registry.TagMap)
+	} else {
+		auth, err := rc.client.Hub.GetReadToken(name)
+		if err != nil {
+			return nil, err
+		}
+
+		tags, err = rc.client.Repository.ListTags(name, auth)
+		if err != nil {
+			return nil, err
+		}
+		rc.tagCache.Set(name, tags, cache.DefaultExpiration)
 	}
 
-	return rc.client.Repository.ListTags(name, auth)
+	return tags, nil
 }
 
 func (rc *remoteConnection) Search(name string) (*registry.SearchResults, error) {
