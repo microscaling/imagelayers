@@ -25,7 +25,7 @@ type Router struct {
 func (sr *Router) AddCorsRoutes(context string, routeMap map[string]map[string]http.HandlerFunc) {
 	sr.generateRoutes(context, routeMap, func(path string, method string, wrap http.HandlerFunc) {
 		corsHndlr := cors.New(cors.Options{
-        		AllowedMethods: []string{"GET", "POST", "DELETE","PUT"},
+			AllowedMethods:   []string{"GET", "POST", "DELETE", "PUT"},
 			AllowCredentials: true,
 		})
 
