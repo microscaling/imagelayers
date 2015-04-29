@@ -18,7 +18,7 @@ func mockHandler(w http.ResponseWriter, r *http.Request) {
 
 func setupServer() {
 	router := Router{mux.NewRouter()}
-	m := map[string]map[string]http.HandlerFunc{
+	m := RouteMap{
 		"GET": {
 			"/it": mockHandler,
 		},
