@@ -87,17 +87,11 @@ func (reg *registryApi) handleTags(w http.ResponseWriter, r *http.Request) {
 
 	res, err := reg.connection.GetTags(image)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+		respondToError(w, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
+	respondWithJSON(w, res)
 }
 
 func (reg *registryApi) handleSearch(w http.ResponseWriter, r *http.Request) {
@@ -105,34 +99,22 @@ func (reg *registryApi) handleSearch(w http.ResponseWriter, r *http.Request) {
 
 	res, err := reg.connection.Search(value)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+		respondToError(w, err)
 		return
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
+	respondWithJSON(w, res)
 }
 
 func (reg *registryApi) handleStatus(w http.ResponseWriter, r *http.Request) {
 	res, err := reg.connection.Status()
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+		respondToError(w, err)
 		return
 	}
 	log.Printf("Status: %s", res.Service)
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
+	respondWithJSON(w, res)
 }
 
 func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
@@ -140,25 +122,18 @@ func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
 
 	body, err := ioutil.ReadAll(r.Body)
 	if err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+		respondToError(w, err)
 		return
 	}
 
 	if err := json.Unmarshal(body, &request); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
+		respondToError(w, err)
 		return
 	}
 
 	res := reg.inspectImages(request.Repos)
 
-	w.Header().Set("Content-Type", "application/json")
-	if err := json.NewEncoder(w).Encode(res); err != nil {
-		w.WriteHeader(http.StatusInternalServerError)
-		fmt.Fprint(w, err.Error())
-		return
-	}
+	respondWithJSON(w, res)
 }
 
 func (reg *registryApi) inspectImages(images []Repo) []*Response {
@@ -214,4 +189,17 @@ func (reg *registryApi) loadMetaData(repo Repo) *Response {
 	}
 
 	return resp
+}
+
+func respondToError(w http.ResponseWriter, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	fmt.Fprint(w, err.Error())
+}
+
+func respondWithJSON(w http.ResponseWriter, o interface{}) {
+	if err := json.NewEncoder(w).Encode(o); err != nil {
+		respondToError(w, err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
 }
