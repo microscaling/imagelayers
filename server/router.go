@@ -1,11 +1,16 @@
 package server // import "github.com/CenturyLinkLabs/imagelayers/server"
 
 import (
+	"expvar"
 	"log"
 	"net/http"
 
 	"github.com/gorilla/mux"
 	"github.com/rs/cors"
+)
+
+var (
+	expRequests = expvar.NewInt("requests")
 )
 
 type statusLoggingResponseWriter struct {
@@ -54,6 +59,7 @@ func (sr *Router) generateRoutes(context string, routeMap RouteMap, build func(s
 			wrap := func(w http.ResponseWriter, r *http.Request) {
 				ww := &statusLoggingResponseWriter{w, 200}
 
+				expRequests.Add(1)
 				log.Printf("Started %s %s", r.Method, r.RequestURI)
 
 				localFct(ww, r)
