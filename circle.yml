@@ -25,7 +25,6 @@ deployment:
       - docker build -t centurylink/imagelayers-api:qa .
       - docker login -e $DOCKER_EMAIL -u $DOCKER_USER -p $DOCKER_PASS
       - docker push centurylink/imagelayers-api:qa
-      - ssh root@$QA_SERVER_IP "./imagelayers_api.sh"
   Production:
     branch: release
     owner: CenturyLinkLabs
