@@ -62,7 +62,7 @@ func newRegistryApi(conn RegistryConnection) *registryApi {
 }
 
 func (reg *registryApi) Routes(context string, router *server.Router) {
-	routes := map[string]map[string]http.HandlerFunc{
+	routes := server.RouteMap{
 		"GET": {
 			"/status":                     reg.handleStatus,
 			"/search":                     reg.handleSearch,

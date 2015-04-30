@@ -43,7 +43,7 @@ func TestHubGetReadToken_Error(t *testing.T) {
 
 	_, err := client.Hub.GetReadToken("foo")
 
-	assert.EqualError(t, err, "Server returned status 404")
+	assert.Contains(t, err.Error(), "/repositories/foo/images returned 404")
 	assert.IsType(t, RegistryError{}, err)
 	re, _ := err.(RegistryError)
 	assert.Equal(t, 404, re.Code)

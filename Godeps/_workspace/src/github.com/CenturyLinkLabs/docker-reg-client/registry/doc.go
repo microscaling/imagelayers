@@ -44,5 +44,10 @@ For more details about interacting with the Docker Hub, see the Docker Hub and
 Registry Spec:
 
 https://docs.docker.com/reference/api/hub_registry_spec/
+
+Note: If your Docker Hub repository has been setup as an Automated Build
+repositry you will not be able to make any changes to it (setting tags, etc...)
+via the Registry API. You can only make changes to an Automated Build
+repository through the Docker Hub UI.
 */
 package registry

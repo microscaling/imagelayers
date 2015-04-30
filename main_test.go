@@ -21,7 +21,7 @@ func teardownServer() {
 	srv.Close()
 }
 
-func TestStatusGetSuccess (t *testing.T) {
+func TestStatusGetSuccess(t *testing.T) {
 	setupServer()
 	defer teardownServer()
 
@@ -36,7 +36,7 @@ func TestStatusGetSuccess (t *testing.T) {
 	assert.Equal(t, srv.URL, resp.Header.Get("Access-Control-Allow-Origin"), "CORS Allow-Origin not set")
 }
 
-func TestAnalyzePostSuccess (t *testing.T) {
+func TestAnalyzePostSuccess(t *testing.T) {
 	setupServer()
 	defer teardownServer()
 
@@ -51,7 +51,7 @@ func TestAnalyzePostSuccess (t *testing.T) {
 	assert.Equal(t, srv.URL, resp.Header.Get("Access-Control-Allow-Origin"), "CORS Allow-Origin not set")
 }
 
-func TestAnalyzeGetNotFound (t *testing.T) {
+func TestAnalyzeGetNotFound(t *testing.T) {
 	setupServer()
 	defer teardownServer()
 
@@ -63,7 +63,7 @@ func TestAnalyzeGetNotFound (t *testing.T) {
 	assert.Equal(t, 404, resp.StatusCode)
 }
 
-func TestStatusPostNotFound (t *testing.T) {
+func TestStatusPostNotFound(t *testing.T) {
 	setupServer()
 	defer teardownServer()
 
@@ -75,7 +75,7 @@ func TestStatusPostNotFound (t *testing.T) {
 	assert.Equal(t, 404, resp.StatusCode)
 }
 
-func TestBadURL (t *testing.T) {
+func TestBadURL(t *testing.T) {
 	setupServer()
 	defer teardownServer()
 

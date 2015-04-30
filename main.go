@@ -6,9 +6,9 @@ import (
 	"log"
 	"net/http"
 
-	"github.com/gorilla/mux"
-	"github.com/CenturyLinkLabs/imagelayers/server"
 	"github.com/CenturyLinkLabs/imagelayers/api"
+	"github.com/CenturyLinkLabs/imagelayers/server"
+	"github.com/gorilla/mux"
 )
 
 type layerServer struct {

@@ -1,4 +1,4 @@
-package registry // import "github.com/CenturyLinkLabs/docker-reg-client/registry"
+package registry
 
 import (
 	"bytes"
@@ -37,12 +37,13 @@ type Client struct {
 // RegistryError encapsulates any errors which result from communicating with
 // the Docker Registry API
 type RegistryError struct {
-	Code    int
-	Message string
+	Code   int
+	method string
+	url    *url.URL
 }
 
 func (e RegistryError) Error() string {
-	return e.Message
+	return fmt.Sprintf("%s %s returned %d", e.method, e.url, e.Code)
 }
 
 // NewClient returns a new Docker Registry API client.
@@ -107,7 +108,7 @@ func (c *Client) do(req *http.Request, v interface{}) (*http.Response, error) {
 	defer resp.Body.Close()
 
 	if status := resp.StatusCode; status < 200 || status > 299 {
-		return resp, RegistryError{status, fmt.Sprintf("Server returned status %d", status)}
+		return resp, RegistryError{Code: status, method: req.Method, url: req.URL}
 	}
 
 	if v != nil {

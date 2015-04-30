@@ -22,10 +22,12 @@ type Router struct {
 	*mux.Router
 }
 
-func (sr *Router) AddCorsRoutes(context string, routeMap map[string]map[string]http.HandlerFunc) {
+type RouteMap map[string]map[string]http.HandlerFunc
+
+func (sr *Router) AddCorsRoutes(context string, routeMap RouteMap) {
 	sr.generateRoutes(context, routeMap, func(path string, method string, wrap http.HandlerFunc) {
 		corsHndlr := cors.New(cors.Options{
-        		AllowedMethods: []string{"GET", "POST", "DELETE","PUT"},
+			AllowedMethods:   []string{"GET", "POST", "DELETE", "PUT"},
 			AllowCredentials: true,
 		})
 
@@ -34,13 +36,13 @@ func (sr *Router) AddCorsRoutes(context string, routeMap map[string]map[string]h
 	})
 }
 
-func (sr *Router) AddRoutes(context string, routeMap map[string]map[string]http.HandlerFunc) {
+func (sr *Router) AddRoutes(context string, routeMap RouteMap) {
 	sr.generateRoutes(context, routeMap, func(path string, method string, wrap http.HandlerFunc) {
 		sr.Path(path).Methods(method).Handler(wrap)
 	})
 }
 
-func (sr *Router) generateRoutes(context string, routeMap map[string]map[string]http.HandlerFunc, build func(string, string, http.HandlerFunc)) {
+func (sr *Router) generateRoutes(context string, routeMap RouteMap, build func(string, string, http.HandlerFunc)) {
 
 	for method, routes := range routeMap {
 		for route, fct := range routes {
