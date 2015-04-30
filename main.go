@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+	"os"
 
 	"github.com/CenturyLinkLabs/imagelayers/api"
 	"github.com/CenturyLinkLabs/imagelayers/server"
@@ -18,12 +19,12 @@ func NewServer() *layerServer {
 	return new(layerServer)
 }
 
-func (s *layerServer) Start(port int) {
+func (s *layerServer) Start(port int) error {
 	router := s.createRouter()
 
-	log.Printf("Server running on port %d", port)
+	log.Printf("Server starting on port %d", port)
 	portString := fmt.Sprintf(":%d", port)
-	http.ListenAndServe(portString, router)
+	return http.ListenAndServe(portString, router)
 }
 
 func (s *layerServer) createRouter() server.Router {
@@ -40,5 +41,8 @@ func main() {
 	flag.Parse()
 
 	s := NewServer()
-	s.Start(*port)
+	if err := s.Start(*port); err != nil {
+		fmt.Fprintf(os.Stderr, "error: %v\n", err)
+		os.Exit(1)
+	}
 }

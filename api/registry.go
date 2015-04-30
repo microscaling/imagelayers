@@ -85,45 +85,58 @@ func (reg *registryApi) handleTags(w http.ResponseWriter, r *http.Request) {
 		image = image + "/" + tail
 	}
 
-	res, _ := reg.connection.GetTags(image)
+	res, err := reg.connection.GetTags(image)
+	if err != nil {
+		respondToError(w, err)
+		return
+	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+	respondWithJSON(w, res)
 }
 
 func (reg *registryApi) handleSearch(w http.ResponseWriter, r *http.Request) {
 	value := r.FormValue("name")
 
-	res, _ := reg.connection.Search(value)
+	res, err := reg.connection.Search(value)
+	if err != nil {
+		respondToError(w, err)
+		return
+	}
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+	respondWithJSON(w, res)
 }
 
 func (reg *registryApi) handleStatus(w http.ResponseWriter, r *http.Request) {
-	status, _ := reg.connection.Status()
-	log.Printf("Status: %s", status.Service)
+	res, err := reg.connection.Status()
+	if err != nil {
+		respondToError(w, err)
+		return
+	}
+	log.Printf("Status: %s", res.Service)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(status)
+	respondWithJSON(w, res)
 }
 
 func (reg *registryApi) handleAnalysis(w http.ResponseWriter, r *http.Request) {
 	var request Request
 
 	body, err := ioutil.ReadAll(r.Body)
-
-	err = json.Unmarshal(body, &request)
 	if err != nil {
-		panic(err)
+		respondToError(w, err)
+		return
 	}
-	res, _ := reg.inspectImages(request.Repos)
 
-	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(res)
+	if err := json.Unmarshal(body, &request); err != nil {
+		respondToError(w, err)
+		return
+	}
+
+	res := reg.inspectImages(request.Repos)
+
+	respondWithJSON(w, res)
 }
 
-func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
+func (reg *registryApi) inspectImages(images []Repo) []*Response {
 	var wg sync.WaitGroup
 	list := make([]*Response, len(images))
 
@@ -149,7 +162,7 @@ func (reg *registryApi) inspectImages(images []Repo) ([]*Response, error) {
 	}
 
 	wg.Wait()
-	return list, nil
+	return list
 }
 
 func (reg *registryApi) loadMetaData(repo Repo) *Response {
@@ -176,4 +189,17 @@ func (reg *registryApi) loadMetaData(repo Repo) *Response {
 	}
 
 	return resp
+}
+
+func respondToError(w http.ResponseWriter, err error) {
+	w.WriteHeader(http.StatusInternalServerError)
+	fmt.Fprint(w, err.Error())
+}
+
+func respondWithJSON(w http.ResponseWriter, o interface{}) {
+	if err := json.NewEncoder(w).Encode(o); err != nil {
+		respondToError(w, err)
+		return
+	}
+	w.Header().Set("Content-Type", "application/json")
 }
