@@ -6,11 +6,12 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"os"
+	"time"
 
 	"github.com/CenturyLinkLabs/imagelayers/api"
 	"github.com/CenturyLinkLabs/imagelayers/server"
 	"github.com/gorilla/mux"
+	"gopkg.in/tylerb/graceful.v1"
 )
 
 type layerServer struct {
@@ -20,12 +21,12 @@ func NewServer() *layerServer {
 	return new(layerServer)
 }
 
-func (s *layerServer) Start(port int) error {
+func (s *layerServer) Start(port int) {
 	router := s.createRouter()
 
 	log.Printf("Server starting on port %d", port)
 	portString := fmt.Sprintf(":%d", port)
-	return http.ListenAndServe(portString, router)
+	graceful.Run(portString, 10*time.Second, router)
 }
 
 func (s *layerServer) createRouter() server.Router {
@@ -59,8 +60,5 @@ func main() {
 	flag.Parse()
 
 	s := NewServer()
-	if err := s.Start(*port); err != nil {
-		fmt.Fprintf(os.Stderr, "error: %v\n", err)
-		os.Exit(1)
-	}
+	s.Start(*port)
 }
