@@ -10,6 +10,7 @@ The ImageLayers API is a golang application and uses [godep](https://github.com/
 
 ```
 $ go get github.com/CenturyLinkLabs/imagelayers
+$ go get github.com/tools/godep
 $ cd $GOPATH/src/github.com/CenturyLinkLabs/imagelayers
 $ godep restore
 $ go test ./... #should all pass
