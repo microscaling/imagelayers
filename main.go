@@ -1,4 +1,4 @@
-package main // import "github.com/CenturyLinkLabs/imagelayers"
+package main // import "github.com/microscaling/imagelayers"
 
 import (
 	"expvar"
@@ -8,9 +8,9 @@ import (
 	"net/http"
 	"time"
 
-	"github.com/CenturyLinkLabs/imagelayers/api"
-	"github.com/CenturyLinkLabs/imagelayers/server"
 	"github.com/gorilla/mux"
+	"github.com/microscaling/imagelayers/api"
+	"github.com/microscaling/imagelayers/server"
 	"gopkg.in/tylerb/graceful.v1"
 )
 

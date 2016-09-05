@@ -1,4 +1,4 @@
-package server // import "github.com/CenturyLinkLabs/imagelayers/server"
+package server // import "github.com/microscaling/imagelayers/server"
 
 import (
 	"expvar"
