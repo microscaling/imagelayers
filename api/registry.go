@@ -1,4 +1,4 @@
-package api // import "github.com/CenturyLinkLabs/imagelayers/api"
+package api // import "github.com/microscaling/imagelayers/api"
 
 import (
 	"encoding/json"
@@ -10,8 +10,8 @@ import (
 	"time"
 
 	"github.com/CenturyLinkLabs/docker-reg-client/registry"
-	"github.com/CenturyLinkLabs/imagelayers/server"
 	"github.com/gorilla/mux"
+	"github.com/microscaling/imagelayers/server"
 	"github.com/pmylund/go-cache"
 )
 
