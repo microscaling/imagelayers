@@ -19,11 +19,11 @@ $ go run main.go #or build and run
 
 ##Build Docker image
 
-Compile the Go binary for Linux and build the Docker image. The build args are used to label the image.
-
 ```
-$ GOOS=linux go build -o imagelayers
+# Compile the Go binary for Linux with static linking for Alpine
+$ GOOS=linux CGO_ENABLED=0 go build -a -installsuffix cgo -o imagelayers
 
+# Build the Docker image using args for the labels
 $ docker build --tag microscaling/imagelayers-api:$(cat VERSION) \
                --build-arg BUILD_DATE=`date -u +"%Y-%m-%dT%H:%M:%SZ"` \
                --build-arg VCS_REF=`git rev-parse --short HEAD` \
